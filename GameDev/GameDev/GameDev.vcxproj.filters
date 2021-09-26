@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Исходные файлы">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков\Model">
+      <UniqueIdentifier>{60fafb9c-ca3c-43e2-9a1a-1076bbeca0b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Controller">
+      <UniqueIdentifier>{3fd6ecc6-d19a-40a3-b7c6-f83f27db11ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\View">
+      <UniqueIdentifier>{0467c480-d35e-4696-b492-c175fc9c2c17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Model\Game">
+      <UniqueIdentifier>{9eb257d2-b9de-471c-94df-019190787ff7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Model\Player">
+      <UniqueIdentifier>{4f90fafa-90a7-44bb-8379-ee1cc5788204}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\View">
+      <UniqueIdentifier>{49824d01-0988-41a7-8af8-8007fdca2a0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Controller">
+      <UniqueIdentifier>{4a327026-5ccc-424e-ad12-87039d7720d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Model">
+      <UniqueIdentifier>{e00e7da3-2893-4550-a301-18bcde46388d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Model\Game">
+      <UniqueIdentifier>{d2ac73d4-d38f-47c2-b613-0e4c731ab921}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Model\Player">
+      <UniqueIdentifier>{28723c79-4be5-47f7-9a0f-74cb97bd76e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Model\Player\ConsolePlayer">
+      <UniqueIdentifier>{c9700a7e-4b45-4279-af20-654053050ea1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Model\Player\AIPlayer">
+      <UniqueIdentifier>{0b953066-24e6-444a-aeff-2c4038a33ad2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Model\Player\ConsolePlayer">
+      <UniqueIdentifier>{c65ebebc-71ed-41ba-affe-72e43d12ab82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Model\Player\AIPlayer">
+      <UniqueIdentifier>{b64a5fd3-17f7-4292-b7e2-c14f1d3c499e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Model\DataTypes">
+      <UniqueIdentifier>{9b6bea29-fbb7-4b95-9fa0-b38cce19a72b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GameDev.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\Controller.cpp">
+      <Filter>Исходные файлы\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="View\Input.cpp">
+      <Filter>Исходные файлы\View</Filter>
+    </ClCompile>
+    <ClCompile Include="View\Output.cpp">
+      <Filter>Исходные файлы\View</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\Game\Game.cpp">
+      <Filter>Исходные файлы\Model\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\Player\Player.cpp">
+      <Filter>Исходные файлы\Model\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\Player\AIPlayer\AIPlayer.cpp">
+      <Filter>Исходные файлы\Model\Player\AIPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\Player\ConsolePlayer\ConsolePlayer.cpp">
+      <Filter>Исходные файлы\Model\Player\ConsolePlayer</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Controller\Controller.hpp">
+      <Filter>Файлы заголовков\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="View\Output.hpp">
+      <Filter>Файлы заголовков\View</Filter>
+    </ClInclude>
+    <ClInclude Include="View\Input.hpp">
+      <Filter>Файлы заголовков\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Game\Game.hpp">
+      <Filter>Файлы заголовков\Model\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Player\Player.hpp">
+      <Filter>Файлы заголовков\Model\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\Parser.hpp">
+      <Filter>Файлы заголовков\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Player\ConsolePlayer\ConsolePlayer.hpp">
+      <Filter>Файлы заголовков\Model\Player\ConsolePlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Player\PlayerFactory.hpp">
+      <Filter>Файлы заголовков\Model\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Player\AIPlayer\AIPlayer.hpp">
+      <Filter>Файлы заголовков\Model\Player\AIPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\DataTypes\Position.hpp">
+      <Filter>Файлы заголовков\Model\DataTypes</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
