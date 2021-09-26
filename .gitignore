@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+GameDev/Debug/*
+
+GameDev/GameDev/Debug/*
