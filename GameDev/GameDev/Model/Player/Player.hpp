@@ -11,6 +11,7 @@ namespace model
 	};
 	class Player
 	{
+		using Move = std::pair<int, Position>;
 	public:
 		Player();
 		~Player();
@@ -21,6 +22,11 @@ namespace model
 		int GetPartitionsAmount() const;
 
 		PlayerType GetPlayerType() const;
+
+		virtual bool HasConsoleInput() const;
+		virtual bool HasAILogic() const;
+
+		Move GetMove() const;
 
 	protected:
 		Position m_pos;

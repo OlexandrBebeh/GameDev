@@ -84,6 +84,9 @@
     <ClCompile Include="Model\Player\ConsolePlayer\ConsolePlayer.cpp">
       <Filter>Исходные файлы\Model\Player\ConsolePlayer</Filter>
     </ClCompile>
+    <ClCompile Include="Controller\Parser.cpp">
+      <Filter>Исходные файлы\Controller</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Controller\Controller.hpp">

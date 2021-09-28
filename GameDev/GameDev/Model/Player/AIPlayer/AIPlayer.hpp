@@ -9,6 +9,7 @@ namespace model
 	public:
 		AIPlayer();
 		~AIPlayer();
+		bool HasAILogic() const override;
 
 	private:
 

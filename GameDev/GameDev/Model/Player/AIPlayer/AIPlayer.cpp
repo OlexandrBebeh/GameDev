@@ -10,3 +10,8 @@ AIPlayer::AIPlayer() : Player()
 AIPlayer::~AIPlayer()
 {
 }
+
+bool AIPlayer::HasAILogic() const
+{
+	return true;
+}

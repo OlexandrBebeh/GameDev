@@ -10,3 +10,8 @@ ConsolePlayer::ConsolePlayer() : Player()
 ConsolePlayer::~ConsolePlayer()
 {
 }
+
+bool ConsolePlayer::HasConsoleInput() const
+{
+	return true;
+}

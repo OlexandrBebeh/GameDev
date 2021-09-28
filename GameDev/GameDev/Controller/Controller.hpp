@@ -14,6 +14,7 @@ namespace controller
 		~Controller() {};
 
 		void Start();
+		void Prepare();
 
 	protected:
 		std::shared_ptr<view::Output> m_output;

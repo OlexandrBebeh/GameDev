@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Controller\Controller.cpp" />
+    <ClCompile Include="Controller\Parser.cpp" />
     <ClCompile Include="GameDev.cpp" />
     <ClCompile Include="Model\Game\Game.cpp" />
     <ClCompile Include="Model\Player\AIPlayer\AIPlayer.cpp" />

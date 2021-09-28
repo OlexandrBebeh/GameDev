@@ -17,9 +17,9 @@ namespace model
 			switch (static_cast<PlayerType>(type))
 			{
 				case PlayerType::console_player:
-					return ConsolePlayer();
+					return new ConsolePlayer();
 				case PlayerType::ai_player:
-					return AIPlayer();
+					return new AIPlayer();
 				default:
 					throw std::invalid_argument("received invalid type");
 			}

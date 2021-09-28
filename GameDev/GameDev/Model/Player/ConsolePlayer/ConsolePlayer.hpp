@@ -9,7 +9,7 @@ namespace model
 	public:
 		ConsolePlayer();
 		~ConsolePlayer();
-
+		bool HasConsoleInput() const override;
 	private:
 
 

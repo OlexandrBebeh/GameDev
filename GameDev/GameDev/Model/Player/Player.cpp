@@ -34,3 +34,18 @@ PlayerType Player::GetPlayerType() const
 {
 	return m_player_type;
 }
+
+bool Player::HasConsoleInput() const
+{
+	return false;
+}
+
+bool Player::HasAILogic() const
+{
+	return false;
+}
+
+Player::Move Player::GetMove() const
+{
+
+}
