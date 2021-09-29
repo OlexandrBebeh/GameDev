@@ -4,6 +4,8 @@
 #include <vector>
 #include <iostream>
 #include "../Player/Player.hpp"
+#include "../DataTypes/Position.hpp"
+
 
 constexpr int FIELD_SIZE = 9;
 constexpr int PARTITION_SIZE = 8;
@@ -16,13 +18,17 @@ namespace model
 		Game();
 		~Game();
 
-		std::shared_ptr <Player> GetNextPlayer() const;
-		void AddPlayer(Player player);
+		Player* GetNextPlayer() const;
+		void AddPlayer(Player* player);
 		std::vector<std::vector<int>> GetField() const;
 		std::vector<std::vector<int>> GetVerticalPatrtitions() const;
 		std::vector<std::vector<int>>  GetHorizontalPatrtitions() const;
+
+		void MakeMove(model::Move move);
+
+		bool IsGameEnd();
 	protected:
-		std::map<int, std::shared_ptr<Player>> m_players;
+		std::map<int, std::unique_ptr<Player>> m_players;
 
 		int m_players_amount{ 0 };
 

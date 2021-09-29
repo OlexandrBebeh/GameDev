@@ -1,7 +1,9 @@
 #pragma once
+#include <utility>
 
 namespace model
 {
+
 	class Position
 	{
 	public:
@@ -23,4 +25,6 @@ namespace model
 		int x;
 		int y;
 	};
+
+	using Move = std::pair<int, Position>;
 }

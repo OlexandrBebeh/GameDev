@@ -39,6 +39,8 @@ void Controller::Prepare()
 			m_output->ShowMessage("Invalid input. Try again.");
 		}
 	}
+
+	Start();
 };
 
 void Controller::Start()
@@ -47,16 +49,33 @@ void Controller::Start()
 	{
 		auto cur_player = m_quoridor->GetNextPlayer();
 
-		std::pair<int, model::Position> move;
+		model::Move move;
 
-		
 		if (cur_player->HasConsoleInput())
 		{
-			m_input->GetString();
+			m_output->ShowMessage("Please, enter your answer:");
+
+			std::string input;
+			input = m_input->GetString();
+
+			if (input == "help")
+			{
+
+				continue;
+			}
+			else if (input == "exit")
+			{
+				return;
+			}
+			
+			move = Parser::ParseMove(input);
 		}
 		if (cur_player->HasAILogic())
 		{
-			Parser
+			move = cur_player->GetMove();
 		}
+
+		m_quoridor->MakeMove(move);
 	}
 }
+

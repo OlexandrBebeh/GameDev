@@ -3,6 +3,7 @@
 
 namespace model
 {
+
 	enum class PlayerType
 	{
 		no_player = -1,
@@ -11,7 +12,7 @@ namespace model
 	};
 	class Player
 	{
-		using Move = std::pair<int, Position>;
+		
 	public:
 		Player();
 		~Player();

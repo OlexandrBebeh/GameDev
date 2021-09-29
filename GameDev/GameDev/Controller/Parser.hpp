@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "../Model/DataTypes/Position.hpp"
+#include <utility>
 
 namespace controller
 {
@@ -11,6 +12,6 @@ namespace controller
 		Parser() {};
 		~Parser() {};
 
-		Move ParseMove(std::string str);
+		static Move ParseMove(std::string str);
 	};
 }

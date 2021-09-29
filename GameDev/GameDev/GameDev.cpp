@@ -4,7 +4,7 @@
 int main()
 {
 	controller::Controller GameController;
-	GameController.Start();
+	GameController.Prepare();
 
 }
 

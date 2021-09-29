@@ -12,7 +12,7 @@ namespace model
 		PlayerFactory() {};
 		~PlayerFactory() {};
 
-		Player GetPlayer(int type)
+		Player* GetPlayer(int type)
 		{
 			switch (static_cast<PlayerType>(type))
 			{

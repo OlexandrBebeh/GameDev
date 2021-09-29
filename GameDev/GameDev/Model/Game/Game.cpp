@@ -11,19 +11,20 @@ Game::~Game()
 {
 }
 
-void Game::AddPlayer(Player player)
+void Game::AddPlayer(Player* player)
 {
-	m_players[m_players_amount] = std::make_shared<Player>(player);
+	std::unique_ptr<Player> unique(player);
+	m_players[m_players_amount] = std::move(unique);
 	m_players_amount++;
 }
 
-std::shared_ptr<Player> Game::GetNextPlayer() const
+Player* Game::GetNextPlayer() const
 {
 	auto ptr = m_players.find(m_current_player);
 
 	if (ptr != m_players.end())
 	{
-		return ptr->second;
+		return ptr->second.get();
 	}
 }
 
@@ -39,4 +40,14 @@ std::vector<std::vector<int>> Game::GetVerticalPatrtitions() const
 std::vector<std::vector<int>> Game::GetHorizontalPatrtitions() const
 {
 	return m_horizontal_partitions;
+}
+
+void Game::MakeMove(model::Move move)
+{
+
+}
+
+bool IsGameEnd()
+{
+	return false;
 }
