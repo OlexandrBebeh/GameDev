@@ -17,16 +17,31 @@ namespace model
 	public:
 		Game();
 		~Game();
-
-		Player* GetNextPlayer() const;
+		void GameReset();
+		Player* GetCurrentPlayer() const;
 		void AddPlayer(Player* player);
 		std::vector<std::vector<int>> GetField() const;
 		std::vector<std::vector<int>> GetVerticalPatrtitions() const;
 		std::vector<std::vector<int>>  GetHorizontalPatrtitions() const;
 
+		void MakeFigureMove(Position);
+		void SetVerticalPartition(Position);
+		void SetHorizontalPartition(Position);
+
 		void MakeMove(model::Move move);
 
 		bool IsGameEnd();
+
+		std::vector<Position> GetPossibleFigureMoves(int player_id);
+
+		std::vector<Position> GetPossibleVerrticalPartitions(int player_id);
+		std::vector<Position> GetPossibleHorizontalPartitions(int player_id);
+
+		std::vector<Position> GetMovesToDirect(Position, Position);
+
+		void NextPlayer();
+
+		void Test();
 	protected:
 		std::map<int, std::unique_ptr<Player>> m_players;
 
@@ -39,6 +54,8 @@ namespace model
 		std::vector<std::vector<int>> m_vertical_partitions;
 
 		std::vector<std::vector<int>> m_horizontal_partitions;
+
+		std::vector<std::pair<int,Move>> m_history;
 
 	};
 }

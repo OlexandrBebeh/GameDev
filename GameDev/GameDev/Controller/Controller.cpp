@@ -47,7 +47,7 @@ void Controller::Start()
 {
 	while (true)
 	{
-		auto cur_player = m_quoridor->GetNextPlayer();
+		auto cur_player = m_quoridor->GetCurrentPlayer();
 
 		model::Move move;
 

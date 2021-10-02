@@ -50,3 +50,13 @@ Move Player::GetMove() const
 	Move a;
 	return a;
 }
+
+void Player::SetStartPosition(Position p)
+{
+	m_start_pos = p;
+}
+
+Position Player::GetStartPosition()
+{
+	return m_start_pos;
+}

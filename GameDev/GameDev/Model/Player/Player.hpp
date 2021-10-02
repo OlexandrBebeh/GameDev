@@ -18,6 +18,9 @@ namespace model
 		~Player();
 
 		void SetPosition(Position p);
+		void SetStartPosition(Position p);
+		Position GetStartPosition();
+
 		void SetPartitionsAmount(int p);
 		Position GetPosition() const;
 		int GetPartitionsAmount() const;
@@ -31,6 +34,7 @@ namespace model
 
 	protected:
 		Position m_pos;
+		Position m_start_pos;
 
 		int m_partitions_amount{10};
 
