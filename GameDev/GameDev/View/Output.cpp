@@ -23,8 +23,8 @@ void Output::ShowGameState(model::Game* game)
 	auto field = game->GetField();
 	auto hor_part = game->GetHorizontalPatrtitions();
 	auto vert_part = game->GetVerticalPatrtitions();
+	auto crost_part = game->GetCrosstPatritions();
 
-	const char vert_line = 196;
 	const char hor_line = 196;
 	const char sqr = 254;
 
@@ -57,12 +57,24 @@ void Output::ShowGameState(model::Game* game)
 		{
 			if (i < hor_part.size() && j < hor_part[i].size())
 			{
-				ch = (hor_part[i][j] == 1) ? vert_line : ' ';
+				ch = (hor_part[i][j] == 1) ? hor_line : ' ';
 				std::cout << ch;
+
+				if (i < crost_part.size() && j < crost_part[i].size())
+				{
+					if (crost_part[i][j] == 1)
+						std::cout << '|';
+					if (crost_part[i][j] == -1)
+						std::cout << hor_line;
+					if (crost_part[i][j] == 0)
+						std::cout << ' ';
+				}
+				else
+				{
+					std::cout << ' ';
+				}
 			}
-			std::cout << ' ';
 		}
 		std::cout << std::endl;
-
 	}
 }

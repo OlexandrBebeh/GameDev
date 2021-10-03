@@ -44,9 +44,16 @@ void Game::GameReset()
 		m_vertical_partitions[col].resize(PARTITION_SIZE);
 	}
 
-	for (int col = 0; col < FIELD_SIZE; col++)
+	for (int col = 0; col < PARTITION_SIZE; col++)
 	{
 		m_horizontal_partitions[col].resize(FIELD_SIZE);
+	}
+
+	m_crosst_partitions.resize(PARTITION_SIZE);
+
+	for (int col = 0; col < PARTITION_SIZE; col++)
+	{
+		m_crosst_partitions[col].resize(FIELD_SIZE);
 	}
 }
 
@@ -124,8 +131,7 @@ void Game::MakeFigureMove(Position position)
  
 std::vector<Position> Game::GetPossibleFigureMoves(int player_id)
 {
-	//auto player_pos = m_players[player_id]->GetPosition();
-	Position player_pos{1, 7};
+	auto player_pos = m_players[player_id]->GetPosition();
 
 	std::vector<Position> positions;
 	std::vector<Position> directions;
@@ -170,7 +176,7 @@ void Game::SetVerticalPartition(Position position)
 	if (it != posible_ways.end())
 	{
 		m_vertical_partitions[position.GetHorizontal()][position.GetVertical()] = 1;
-		m_horizontal_partitions[position.GetHorizontal()][position.GetVertical()] = -1;
+		m_crosst_partitions[position.GetHorizontal()][position.GetVertical()] = 1;
 
 		m_vertical_partitions[position.GetHorizontal()][position.GetVertical() + 1] = 1;
 
@@ -196,7 +202,7 @@ void Game::SetHorizontalPartition(Position position)
 	if (it != posible_ways.end())
 	{
 		m_horizontal_partitions[position.GetHorizontal()][position.GetVertical()] = 1;
-		m_vertical_partitions[position.GetHorizontal()][position.GetVertical()] = -1;
+		m_crosst_partitions[position.GetHorizontal()][position.GetVertical()] = -1;
 
 		m_horizontal_partitions[position.GetHorizontal() + 1][position.GetVertical()] = 1;
 
@@ -219,9 +225,10 @@ std::vector<Position> Game::GetPossibleVerrticalPartitions(int player_id)
 		{
 			if (m_vertical_partitions[i][j] == 0 && m_vertical_partitions[i + 1][j] == 0)
 			{
-				
-				 positions.push_back({ i,j });
-				
+				if (m_crosst_partitions[i][j] == 0)
+				{
+					positions.push_back({ i,j });
+				}
 			}
 		}
 	}
@@ -237,9 +244,12 @@ std::vector<Position> Game::GetPossibleHorizontalPartitions(int player_id)
 	{
 		for (int j = 0; j < PARTITION_SIZE; j++)
 		{
-			if (m_vertical_partitions[i][j] == 0 && m_vertical_partitions[i][j + 1] == 0)
+			if (m_horizontal_partitions[i][j] == 0 && m_horizontal_partitions[i][j + 1] == 0)
 			{
-				positions.push_back({ i,j });
+				if (m_crosst_partitions[i][j] == 0)
+				{
+					positions.push_back({ i,j });
+				}
 			}
 		}
 	}
@@ -384,7 +394,7 @@ std::vector<Position> Game::GetMovesToDirect(Position start, Position dir = { 0,
 					&& m_vertical_partitions[start.GetVertical() + dir.GetVertical()][start.GetHorizontal()] != 1)
 				{
 					if (m_field[start.GetVertical() + dir.GetVertical()][start.GetHorizontal() + 1] == -1)
-					positions.emplace_back(start.GetVertical() + vert_dir, start.GetHorizontal() + 1);
+					positions.emplace_back(start.GetVertical() + dir.GetVertical(), start.GetHorizontal() + 1);
 				}
 
 				if (start.GetHorizontal() - 1 >= 0
@@ -401,6 +411,61 @@ std::vector<Position> Game::GetMovesToDirect(Position start, Position dir = { 0,
 
 	return positions;
 
+}
+std::vector<Position> model::Game::GetPossibleFigureMoves(Position start)
+{
+	std::vector<Position> positions;
+	std::vector<Position> directions;
+	directions.push_back({ 1,0 });
+	directions.push_back({ -1,0 });
+	directions.push_back({ 0,1 });
+	directions.push_back({ 0,-1 });
+
+	for (auto dir : directions)
+	{
+		auto pos = GetMovesToDirect(start, dir);
+		positions.insert(positions.end(), pos.begin(), pos.end());
+	}
+
+	return  positions;
+}
+
+std::vector<std::vector<int>> Game::GetCrosstPatritions() const
+{
+	return m_crosst_partitions;
+}
+
+bool Game::ValidField()
+{
+	bool is_valid = true;
+	for (auto& player : m_players)
+	{
+		std::vector<Position> vec;
+		is_valid = is_valid 
+			&& Deikstra(player.second->GetPosition(), player.second->GetPlayerWinRow(), vec);
+	}
+	return false;
+}
+
+bool Game::Deikstra(Position pos, int target, std::vector<Position> used)
+{
+	auto possible_moves = GetPossibleFigureMoves(pos);
+	for (auto move : possible_moves)
+	{
+		if (std::find(used.begin(), used.end(), move) == used.end())
+		{
+			if (target == move.GetVertical())
+			{
+				return true;
+			}
+			else
+			{
+				used.push_back(move);
+				Deikstra(move, target, used);
+			}
+		}
+	}
+	return false;
 }
 
 void Game::Test()
@@ -421,45 +486,41 @@ void Game::Test()
 	m_horizontal_partitions =
 	{
 		{0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,1,0},
-		{0,1,0,0,0,0,0,0,0},
+		{0,1,1,0,0,0,0,0,0},
+		{0,1,1,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,0},
-		{1,1,1,1,1,1,1,1,1},
+		{1,1,1,1,1,1,0,1,1},
 		{0,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,0},
 	};
 	m_vertical_partitions =
 	{
-		{0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,1},
 		{1,1,0,0,0,0,0,0},
+		{1,1,0,0,0,0,0,0},
+		{1,0,0,0,0,0,0,0},
+		{1,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,0,1,0,0,0},
+		{0,0,0,0,1,0,0,0},
 		{0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0},
+	};
+	m_crosst_partitions =
+	{
+		{1,1,0,0,0,0,0,0},
+		{0,-1,0,0,0,0,0,0},
+		{1,-1,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0},
+		{-1, 0,-1, 0,-1, 0, 0,-1},
+		{0,0,0,0,1,0,0,0},
 		{0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0}
 	};
 
 	auto output = view::Output();
 
 	output.ShowGameState(this);
-
-
-	auto dir = GetMovesToDirect({ 7,1 }, { -1,0 });
-
-	if (dir[0] == Position{ 5,1 })
-	{
-		std::cout << "";
-	}
-
-	dir = GetMovesToDirect({ 1,1 }, { 1,0 });
-
-	dir = GetMovesToDirect({ 1,7 }, { 0,1 });
-
-	dir = GetMovesToDirect({ 7,1 }, {  1,0 });
-
-	GetPossibleFigureMoves(0);
-
+	std::vector<Position> vec;
+	bool b = Deikstra({ 2,1 }, 8, vec);
 }

@@ -22,7 +22,11 @@ namespace model
 		void AddPlayer(Player* player);
 		std::vector<std::vector<int>> GetField() const;
 		std::vector<std::vector<int>> GetVerticalPatrtitions() const;
-		std::vector<std::vector<int>>  GetHorizontalPatrtitions() const;
+		std::vector<std::vector<int>> GetHorizontalPatrtitions() const;
+		std::vector<std::vector<int>> GetCrosstPatritions() const;
+
+		bool ValidField();
+		bool Deikstra(Position, int, std::vector<Position>);
 
 		void MakeFigureMove(Position);
 		void SetVerticalPartition(Position);
@@ -38,6 +42,7 @@ namespace model
 		std::vector<Position> GetPossibleHorizontalPartitions(int player_id);
 
 		std::vector<Position> GetMovesToDirect(Position, Position);
+		std::vector<Position> GetPossibleFigureMoves(Position);
 
 		void NextPlayer();
 
@@ -54,6 +59,8 @@ namespace model
 		std::vector<std::vector<int>> m_vertical_partitions;
 
 		std::vector<std::vector<int>> m_horizontal_partitions;
+
+		std::vector<std::vector<int>> m_crosst_partitions;
 
 		std::vector<std::pair<int,Move>> m_history;
 
