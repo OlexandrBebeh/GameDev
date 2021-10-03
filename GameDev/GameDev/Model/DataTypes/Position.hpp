@@ -1,5 +1,7 @@
 #pragma once
 #include <utility>
+#include <iostream>
+#include <ostream>
 
 namespace model
 {
@@ -27,9 +29,14 @@ namespace model
 				&& pos.vertical == this->vertical;
 		}
 
+		friend std::ostream& operator<<(std::ostream& os, const Position& pos)
+		{
+			os << "{" << pos.vertical << "," << pos.horizontal << "}";
+		}
+
 	protected:
-		int horizontal;
 		int vertical;
+		int horizontal;
 	};
 
 	using Move = std::pair<int, Position>;

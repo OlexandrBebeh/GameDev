@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include "../Model/Game/Game.hpp"
 
 namespace view
 {
@@ -11,6 +12,7 @@ namespace view
 		~Output() {};
 
 		void ShowMessage(std::string);
+		void ShowGameState(model::Game*);
 
 		void StartMenu();
 	};
