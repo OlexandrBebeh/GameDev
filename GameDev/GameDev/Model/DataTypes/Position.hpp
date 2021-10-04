@@ -29,6 +29,18 @@ namespace model
 				&& pos.vertical == this->vertical;
 		}
 
+		bool operator!=(Position pos)
+		{
+			return pos.horizontal != this->horizontal
+				|| pos.vertical != this->vertical;
+		}
+		 
+		bool operator<(const Position& pos) const
+		{
+			return (pos.vertical * 9 + pos.horizontal)
+				< (this->vertical * 9 + this->horizontal);
+		}
+
 		friend std::ostream& operator<<(std::ostream& os, const Position& pos)
 		{
 			os << "{" << pos.vertical << "," << pos.horizontal << "}";

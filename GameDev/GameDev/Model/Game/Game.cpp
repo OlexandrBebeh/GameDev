@@ -1,5 +1,6 @@
 #include "Game.hpp"
 #include "../../View/Output.hpp"
+#include <set>
 
 using namespace model;
 
@@ -440,31 +441,66 @@ bool Game::ValidField()
 	bool is_valid = true;
 	for (auto& player : m_players)
 	{
-		std::vector<Position> vec;
-		is_valid = is_valid 
-			&& Deikstra(player.second->GetPosition(), player.second->GetPlayerWinRow(), vec);
 	}
 	return false;
 }
 
-bool Game::Deikstra(Position pos, int target, std::vector<Position> used)
+bool Game::Dijkstra(std::vector<Position>& path)
 {
-	auto possible_moves = GetPossibleFigureMoves(pos);
-	for (auto move : possible_moves)
+	Position start{ 2,1 };
+	std::map<int, int> distances;
+	std::map<int, Position> prev_node;
+
+	auto cmp = [&](Position a, Position b) 
+	{ 
+		return distances[a.GetHorizontal() + a.GetVertical() * FIELD_SIZE] < distances[b.GetHorizontal() + b.GetVertical() * FIELD_SIZE];
+	};
+	std::multiset<Position,decltype(cmp)> queue(cmp);
+
+	for (int col = 0; col < FIELD_SIZE; col++)
 	{
-		if (std::find(used.begin(), used.end(), move) == used.end())
+		for (int row = 0; row < FIELD_SIZE; row++)
 		{
-			if (target == move.GetVertical())
+			distances[row + col * FIELD_SIZE] = 1000;
+			prev_node[row + col * FIELD_SIZE] = {-1,-1};
+		}
+	}
+	distances[start.GetHorizontal() + start.GetVertical() * FIELD_SIZE] = 0;
+	prev_node[start.GetHorizontal() + start.GetVertical() * FIELD_SIZE] = Position{ -1,-1 };
+
+	queue.insert(start);
+	while (queue.size() > 0)
+	{
+		auto position = *queue.begin();
+
+		queue.erase(queue.begin());
+
+		if (position.GetVertical() == 8)
+		{
+			path = std::vector<Position>();
+			auto p = position;
+			while (prev_node[p.GetHorizontal() + p.GetVertical() * FIELD_SIZE] != Position( -1,-1 ))
 			{
-				return true;
+				path.push_back(p);
+				p = prev_node[p.GetHorizontal() + p.GetVertical() * FIELD_SIZE];
 			}
-			else
+
+			return true;
+		}
+
+		int travelDist = distances[position.GetHorizontal() + position.GetVertical() * FIELD_SIZE];
+		for (auto pos : GetPossibleFigureMoves(position))
+		{
+			int dist = travelDist + 1;
+			if (dist < distances[pos.GetHorizontal() + pos.GetVertical() * FIELD_SIZE])
 			{
-				used.push_back(move);
-				Deikstra(move, target, used);
+				distances[pos.GetHorizontal() + pos.GetVertical() * FIELD_SIZE] = dist;
+				prev_node[pos.GetHorizontal() + pos.GetVertical() * FIELD_SIZE] = position;
+				queue.insert(pos);
 			}
 		}
 	}
+
 	return false;
 }
 
@@ -491,7 +527,7 @@ void Game::Test()
 		{0,0,0,0,0,0,0,0,0},
 		{1,1,1,1,1,1,0,1,1},
 		{0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0},
+		{1,1,1,1,1,1,1,1,1},
 		{0,0,0,0,0,0,0,0,0},
 	};
 	m_vertical_partitions =
@@ -521,6 +557,9 @@ void Game::Test()
 	auto output = view::Output();
 
 	output.ShowGameState(this);
+
+
 	std::vector<Position> vec;
-	bool b = Deikstra({ 2,1 }, 8, vec);
+
+	bool t = Dijkstra(vec);
 }

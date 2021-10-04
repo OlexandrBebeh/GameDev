@@ -26,7 +26,7 @@ namespace model
 		std::vector<std::vector<int>> GetCrosstPatritions() const;
 
 		bool ValidField();
-		bool Deikstra(Position, int, std::vector<Position>);
+		bool Dijkstra(std::vector<Position>& path);
 
 		void MakeFigureMove(Position);
 		void SetVerticalPartition(Position);
