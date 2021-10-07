@@ -44,6 +44,7 @@ namespace model
 		friend std::ostream& operator<<(std::ostream& os, const Position& pos)
 		{
 			os << "{" << pos.vertical << "," << pos.horizontal << "}";
+			return os;
 		}
 
 	protected:

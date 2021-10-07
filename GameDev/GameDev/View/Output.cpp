@@ -17,6 +17,15 @@ void Output::StartMenu()
 
 }
 
+void view::Output::ShowHelp()
+{
+	ShowMessage("Commands:");
+	ShowMessage("1-2-3 - move by figure to position (2,3)");
+	ShowMessage("2-5-6 - set vertical partition on position (5,6)");
+	ShowMessage("3-5-6 - set horizontal partition on position (5,6)");
+	ShowMessage("exit - end game");
+}
+
 
 void Output::ShowGameState(model::Game* game)
 {
@@ -29,9 +38,9 @@ void Output::ShowGameState(model::Game* game)
 	const char sqr = 254;
 
 	char ch;
-	for (int i = 0; i < FIELD_SIZE; i++)
+	for (int i = 0; i < model::FIELD_SIZE; i++)
 	{
-		for (int j = 0; j < FIELD_SIZE; j++)
+		for (int j = 0; j < model::FIELD_SIZE; j++)
 		{
 			if (field[i][j] >= 0)
 			{
@@ -53,7 +62,7 @@ void Output::ShowGameState(model::Game* game)
 
 		std::cout << std::endl;
 
-		for (int j = 0; j < FIELD_SIZE; j++)
+		for (int j = 0; j < model::FIELD_SIZE; j++)
 		{
 			if (i < hor_part.size() && j < hor_part[i].size())
 			{
@@ -76,5 +85,65 @@ void Output::ShowGameState(model::Game* game)
 			}
 		}
 		std::cout << std::endl;
+	}
+}
+
+void view::Output::ShowPositions(model::Game* game)
+{
+	auto field = game->GetField();
+	auto hor_part = game->GetHorizontalPatrtitions();
+	auto vert_part = game->GetVerticalPatrtitions();
+	auto crost_part = game->GetCrosstPatritions();
+
+	const char hor_line = 196;
+	const char sqr = 254;
+
+	char ch;
+	for (int i = 0; i < model::FIELD_SIZE; i++)
+	{
+		for (int j = 0; j < model::FIELD_SIZE; j++)
+		{
+			if (field[i][j] >= 0)
+			{
+				std::cout << "(" <<i << "," << j << ")";
+
+			}
+			else
+			{
+				std::cout << sqr;
+			}
+
+			if (i < vert_part.size() && j < vert_part[i].size())
+			{
+				ch = '|';
+				std::cout << ch;
+				std::cout << "(" << i << "," << j << ")";
+				std::cout << ch;
+			}
+
+		}
+
+		std::cout << std::endl;
+
+		for (int j = 0; j < model::FIELD_SIZE; j++)
+		{
+			if (i < hor_part.size() && j < hor_part[i].size())
+			{
+				std::cout << "(" << i << "," << j << ")";
+
+				std::cout << "     ";
+			}
+		}
+		std::cout << std::endl;
+	}
+}
+
+void view::Output::ShowPossibleMoves(model::Game* game)
+{
+	auto positions = game->GetPossibleFigureMoves(game->GetCurrentPlayerId());
+
+	for (auto& pos : positions)
+	{
+		std::cout << pos;
 	}
 }

@@ -142,6 +142,7 @@
     <ClCompile Include="Controller\Controller.cpp" />
     <ClCompile Include="Controller\Parser.cpp" />
     <ClCompile Include="GameDev.cpp" />
+    <ClCompile Include="Model\Game\Field.cpp" />
     <ClCompile Include="Model\Game\Game.cpp" />
     <ClCompile Include="Model\Player\AIPlayer\AIPlayer.cpp" />
     <ClCompile Include="Model\Player\ConsolePlayer\ConsolePlayer.cpp" />
@@ -153,11 +154,13 @@
     <ClInclude Include="Controller\Controller.hpp" />
     <ClInclude Include="Controller\Parser.hpp" />
     <ClInclude Include="Model\DataTypes\Position.hpp" />
+    <ClInclude Include="Model\Game\Field.hpp" />
     <ClInclude Include="Model\Game\Game.hpp" />
     <ClInclude Include="Model\Player\AIPlayer\AIPlayer.hpp" />
     <ClInclude Include="Model\Player\ConsolePlayer\ConsolePlayer.hpp" />
     <ClInclude Include="Model\Player\Player.hpp" />
     <ClInclude Include="Model\Player\PlayerFactory.hpp" />
+    <ClInclude Include="Model\Strategy\BaseStrategy.hpp" />
     <ClInclude Include="View\Input.hpp" />
     <ClInclude Include="View\Output.hpp" />
   </ItemGroup>

@@ -13,7 +13,10 @@ namespace view
 
 		void ShowMessage(std::string);
 		void ShowGameState(model::Game*);
-
+		void ShowPositions(model::Game*);
+		void ShowPossibleMoves(model::Game*);
 		void StartMenu();
+		void ShowHelp();
+
 	};
 }

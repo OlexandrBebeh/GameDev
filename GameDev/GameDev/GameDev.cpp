@@ -5,6 +5,5 @@ int main()
 {
 	controller::Controller GameController;
 	GameController.Prepare();
-
 }
 

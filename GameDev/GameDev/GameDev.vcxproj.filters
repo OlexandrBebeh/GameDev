@@ -58,6 +58,9 @@
     <Filter Include="Файлы заголовков\Model\DataTypes">
       <UniqueIdentifier>{9b6bea29-fbb7-4b95-9fa0-b38cce19a72b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Файлы заголовков\Model\Strategy">
+      <UniqueIdentifier>{24fdec7f-778b-427d-918c-864fef75528b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameDev.cpp">
@@ -86,6 +89,9 @@
     </ClCompile>
     <ClCompile Include="Controller\Parser.cpp">
       <Filter>Исходные файлы\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\Game\Field.cpp">
+      <Filter>Исходные файлы\Model\Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +124,12 @@
     </ClInclude>
     <ClInclude Include="Model\DataTypes\Position.hpp">
       <Filter>Файлы заголовков\Model\DataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Strategy\BaseStrategy.hpp">
+      <Filter>Файлы заголовков\Model\Strategy</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Game\Field.hpp">
+      <Filter>Файлы заголовков\Model\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

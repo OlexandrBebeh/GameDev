@@ -1,5 +1,6 @@
 #pragma once
 #include "../DataTypes/Position.hpp"
+#include "../Game/Field.hpp"
 
 namespace model
 {
@@ -24,6 +25,14 @@ namespace model
 		void SetPartitionsAmount(int p);
 		Position GetPosition() const;
 		int GetPartitionsAmount() const;
+		void SetPlayerWinRow(int row)
+		{
+			m_player_win_row = row;
+		}
+		void SetField(std::shared_ptr<Field> field)
+		{
+			m_field = field;
+		}
 		int GetPlayerWinRow() const
 		{
 			return m_player_win_row;
@@ -42,5 +51,7 @@ namespace model
 		int m_partitions_amount{10};
 
 		PlayerType m_player_type{ PlayerType::no_player };
+
+		std::shared_ptr<Field> m_field;
 	};
 }

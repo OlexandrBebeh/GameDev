@@ -45,8 +45,12 @@ void Controller::Prepare()
 
 void Controller::Start()
 {
+	m_output->ShowHelp();
+
 	while (true)
 	{
+		m_output->ShowGameState(m_quoridor.get());
+
 		auto cur_player = m_quoridor->GetCurrentPlayer();
 
 		model::Move move;
@@ -60,7 +64,17 @@ void Controller::Start()
 
 			if (input == "help")
 			{
-
+				m_output->ShowHelp();
+				continue;
+			}
+			else if (input == "moves")
+			{
+				m_output->ShowPossibleMoves(m_quoridor.get());
+				continue;
+			}
+			else if (input == "positions")
+			{
+				m_output->ShowPositions(m_quoridor.get());
 				continue;
 			}
 			else if (input == "exit")

@@ -54,6 +54,7 @@ Move Player::GetMove() const
 void Player::SetStartPosition(Position p)
 {
 	m_start_pos = p;
+	m_pos = m_start_pos;
 }
 
 Position Player::GetStartPosition()
