@@ -23,11 +23,14 @@ namespace model
 			return vertical;
 		}
 
-		bool operator==(Position pos)
+		bool operator==(const Position& pos) const
 		{
-			return pos.horizontal == this->horizontal
+			 return pos.horizontal == this->horizontal
 				&& pos.vertical == this->vertical;
+		
 		}
+
+
 
 		bool operator!=(Position pos)
 		{

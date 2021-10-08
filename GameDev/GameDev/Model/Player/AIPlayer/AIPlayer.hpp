@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Player.hpp"
+#include "../../Strategy/BaseStrategy.hpp"
 
 namespace model
 {
@@ -10,9 +11,9 @@ namespace model
 		AIPlayer();
 		~AIPlayer();
 		bool HasAILogic() const override;
-
+		Move GetMove() override;
 	private:
-
+		BaseStrategy strategy = BaseStrategy();
 
 	};
 }

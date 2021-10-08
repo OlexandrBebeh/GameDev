@@ -30,7 +30,7 @@ void Game::AddPlayer(Player* player)
 
 		m_field->m_field[pos.GetVertical()][pos.GetHorizontal()] = m_players_amount;
 
-		std::unique_ptr<Player> unique(player);
+		std::shared_ptr<Player> unique(player);
 		m_players[m_players_amount] = std::move(unique);
 		m_players_amount++;
 	}
@@ -70,6 +70,16 @@ std::vector<std::vector<int>> Game::GetCrosstPatritions() const
 	return m_field->m_crosst_partitions;
 }
 
+std::vector<Position> model::Game::GetPossibleVerticalPatrtitions() const
+{
+	return m_field->m_possible_vertical_partitions;
+}
+
+std::vector<Position> model::Game::GetPossibleHorizontalPatrtitions() const
+{
+	return m_field->m_possible_horizontal_partitions;
+}
+
 
 void Game::MakeMove(model::Move move)
 {
@@ -77,37 +87,31 @@ void Game::MakeMove(model::Move move)
 	{
 		MakeFigureMove(move.second);
 	}
-	else if (move.first == 2 || move.first == 3)
+	else if (move.first == 2)
 	{
-		if (GetCurrentPlayer()->GetPartitionsAmount() > 0)
+		
+		auto it = std::find(m_field->m_possible_vertical_partitions.begin(),
+			m_field->m_possible_vertical_partitions.end(),
+							move.second);
+
+		if (it != m_field->m_possible_vertical_partitions.end())
 		{
-			throw std::exception{ "Wrong Move" };
+			m_field->SetVerticalPartition(move.second);
+			m_field->m_history.emplace_back(m_current_player, Move(2, move.second));
 		}
-		if (move.first == 2)
+
+	}
+	else if (move.first == 3)
+	{
+
+		auto it = std::find(m_field->m_possible_horizontal_partitions.begin(),
+			m_field->m_possible_horizontal_partitions.end(),
+			move.second);
+
+		if (it != m_field->m_possible_horizontal_partitions.end())
 		{
-			auto it = std::find(m_field->m_possible_vertical_partitions.begin(),
-				m_field->m_possible_vertical_partitions.end(),
-								move.second);
-
-			if (it != m_field->m_possible_vertical_partitions.end())
-			{
-				m_field->SetVerticalPartition(move.second);
-				m_field->m_history.emplace_back(m_current_player, Move(2, move.second));
-			}
-		}
-		else
-		{
-
-			auto it = std::find(m_field->m_possible_horizontal_partitions.begin(),
-				m_field->m_possible_horizontal_partitions.end(),
-								move.second);
-
-			if (it != m_field->m_possible_horizontal_partitions.end())
-			{
-				m_field->SetHorizontalPartition(move.second);
-				m_field->m_history.emplace_back(m_current_player, Move(3, move.second));
-			}
-				
+			m_field->SetHorizontalPartition(move.second);
+			m_field->m_history.emplace_back(m_current_player, Move(3, move.second));
 		}
 
 		GetCurrentPlayer()->SetPartitionsAmount(GetCurrentPlayer()->GetPartitionsAmount() - 1);
@@ -116,6 +120,7 @@ void Game::MakeMove(model::Move move)
 	{
 		throw std::exception{ "Game::MakeMove - wrong move" };
 	}
+
 	m_field->m_possible_horizontal_partitions = CheckPossibleHorizontalPartitions();
 	m_field->m_possible_vertical_partitions = CheckPossibleVerrticalPartitions();
 
@@ -125,6 +130,49 @@ void Game::MakeMove(model::Move move)
 bool Game::IsGameEnd()
 {
 	return false;
+}
+
+std::vector<Move> model::Game::GetPossibleMoves()
+{
+	std::vector<Move> moves;
+
+	for (auto pos : m_field->GetPossibleFigureMoves(GetCurrentPlayer()->GetPosition()))
+	{
+		moves.emplace_back(1, pos);
+	}
+	for (auto pos : m_field->m_possible_vertical_partitions)
+	{
+		moves.emplace_back(2, pos);
+	}
+	for (auto pos : m_field->m_possible_horizontal_partitions)
+	{
+		moves.emplace_back(3, pos);
+	}
+
+	return moves;
+}
+
+std::vector<Move> model::Game::GetPossibleMoves(int player)
+{
+	std::vector<Move> moves;
+
+	for (auto pos : m_field->GetPossibleFigureMoves(m_players[player]->GetPosition()))
+	{
+		moves.emplace_back(1, pos);
+	}
+	if (m_players[player]->GetPartitionsAmount())
+	{
+		for (auto pos : m_field->m_possible_vertical_partitions)
+		{
+			moves.emplace_back(2, pos);
+		}
+		for (auto pos : m_field->m_possible_horizontal_partitions)
+		{
+			moves.emplace_back(3, pos);
+		}
+	}
+
+	return moves;
 }
 
 void Game::MakeFigureMove(Position position)
@@ -304,4 +352,29 @@ void Game::Test()
 	//	{0,0,0,0,0,0,0,0}
 	//};
 
+}
+
+int model::Game::CheckWin()
+{
+	int winner = -1;
+	for (auto& player : m_players)
+	{
+		if (player.second->GetPosition().GetVertical() 
+			== player.second->GetPlayerWinRow())
+		{
+			winner = player.first;
+			break;
+		}
+	}
+	return winner;
+}
+
+void model::Game::ResetGame()
+{
+	m_field->GameReset();
+
+	m_players.clear();
+
+	m_players_amount = 0;
+	m_current_player = 0;
 }

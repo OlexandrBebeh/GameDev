@@ -27,15 +27,22 @@ namespace model
 		std::vector<std::vector<int>> GetVerticalPatrtitions() const;
 		std::vector<std::vector<int>> GetHorizontalPatrtitions() const;
 		std::vector<std::vector<int>> GetCrosstPatritions() const;
+		std::vector<Position> GetPossibleVerticalPatrtitions() const;
+		std::vector<Position> GetPossibleHorizontalPatrtitions() const;
 		std::vector<Position> CheckPossibleVerrticalPartitions();
 		std::vector<Position> CheckPossibleHorizontalPartitions();
 		bool IsGameEnd();
-
+		std::vector<Move> GetPossibleMoves();
+		std::vector<Move> GetPossibleMoves(int player);
 		void NextPlayer();
 
 		void Test();
+
+		int CheckWin();
+
+		void ResetGame();
 	protected:
-		std::map<int, std::unique_ptr<Player>> m_players;
+		std::map<int, std::shared_ptr<Player>> m_players;
 
 		std::shared_ptr<Field> m_field;
 

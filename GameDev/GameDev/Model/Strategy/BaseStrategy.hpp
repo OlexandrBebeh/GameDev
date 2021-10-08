@@ -1,12 +1,14 @@
 #pragma once
 
-#include "../Game/Game.hpp"
+#include "../Game/Field.hpp"
 
 namespace model
 {
 	class BaseStrategy
 	{
 	public:
-		Game m_game;
+		BaseStrategy() {};
+		~BaseStrategy() {};
+		Move GetMove(Field*, Position pos, int target);
 	};
 }

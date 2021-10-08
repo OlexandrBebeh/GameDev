@@ -42,7 +42,7 @@ namespace model
 		virtual bool HasConsoleInput() const;
 		virtual bool HasAILogic() const;
 
-		Move GetMove() const;
+		virtual Move GetMove();
 
 	protected:
 		Position m_pos;

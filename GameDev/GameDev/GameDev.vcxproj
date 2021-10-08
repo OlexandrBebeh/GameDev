@@ -147,6 +147,7 @@
     <ClCompile Include="Model\Player\AIPlayer\AIPlayer.cpp" />
     <ClCompile Include="Model\Player\ConsolePlayer\ConsolePlayer.cpp" />
     <ClCompile Include="Model\Player\Player.cpp" />
+    <ClCompile Include="Model\Strategy\BaseStrategy.cpp" />
     <ClCompile Include="View\Input.cpp" />
     <ClCompile Include="View\Output.cpp" />
   </ItemGroup>

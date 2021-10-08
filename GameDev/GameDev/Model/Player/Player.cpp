@@ -45,7 +45,7 @@ bool Player::HasAILogic() const
 	return false;
 }
 
-Move Player::GetMove() const
+Move Player::GetMove()
 {
 	Move a;
 	return a;

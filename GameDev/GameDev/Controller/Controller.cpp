@@ -7,40 +7,45 @@ using namespace controller;
 
 void Controller::Prepare()
 {
-	m_input = std::make_shared<view::Input>();
-	m_output = std::make_shared<view::Output>();
+	m_input    = std::make_shared<view::Input>();
+	m_output   = std::make_shared<view::Output>();
 	m_quoridor = std::make_shared<model::Game>();
-	m_output->StartMenu();
 
 
 	while (true)
 	{
-		std::string str = m_input->GetString();
+		m_quoridor->ResetGame();
+		while (true)
+		{
+			m_output->StartMenu();
 
-		if (str == "1")
-		{
-			m_quoridor->AddPlayer(m_player_factory.GetPlayer(0));
-			m_quoridor->AddPlayer(m_player_factory.GetPlayer(0));
-			break;
-		}
-		else if (str == "2")
-		{
-			m_quoridor->AddPlayer(m_player_factory.GetPlayer(0));
-			m_quoridor->AddPlayer(m_player_factory.GetPlayer(1));
-			break;
+			std::string str = m_input->GetString();
 
+			if (str == "1")
+			{
+				m_quoridor->AddPlayer(m_player_factory.GetPlayer(0));
+				m_quoridor->AddPlayer(m_player_factory.GetPlayer(0));
+				break;
+			}
+			else if (str == "2")
+			{
+				m_quoridor->AddPlayer(m_player_factory.GetPlayer(0));
+				m_quoridor->AddPlayer(m_player_factory.GetPlayer(1));
+				break;
+
+			}
+			else if (str == "3")
+			{
+				return;
+			}
+			else
+			{
+				m_output->ShowMessage("Invalid input. Try again.");
+			}
 		}
-		else if (str == "3")
-		{
-			return;
-		}
-		else
-		{
-			m_output->ShowMessage("Invalid input. Try again.");
-		}
+
+		Start();
 	}
-
-	Start();
 };
 
 void Controller::Start()
@@ -49,6 +54,12 @@ void Controller::Start()
 
 	while (true)
 	{
+		if (m_quoridor->CheckWin() >= 0)
+		{
+			m_output->ShowMessage("Congrads player:" + m_quoridor->CheckWin());
+			return;
+		}
+
 		m_output->ShowGameState(m_quoridor.get());
 
 		auto cur_player = m_quoridor->GetCurrentPlayer();
@@ -89,7 +100,16 @@ void Controller::Start()
 			move = cur_player->GetMove();
 		}
 
-		m_quoridor->MakeMove(move);
+		auto moves = m_quoridor->GetPossibleMoves(m_quoridor->GetCurrentPlayerId());
+
+		if (std::find(moves.begin(),moves.end(),move) != moves.end())
+		{
+			m_quoridor->MakeMove(move);
+		}
+		else
+		{
+			m_output->ShowMessage("Wrong move");
+		}
 	}
 }
 
