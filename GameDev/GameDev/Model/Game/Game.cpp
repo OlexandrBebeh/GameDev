@@ -100,6 +100,7 @@ void Game::MakeMove(model::Move move)
 			m_field->m_history.emplace_back(m_current_player, Move(2, move.second));
 		}
 
+		GetCurrentPlayer()->SetPartitionsAmount(GetCurrentPlayer()->GetPartitionsAmount() - 1);
 	}
 	else if (move.first == 3)
 	{

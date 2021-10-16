@@ -188,3 +188,12 @@ void view::Output::ShowPossibleMoves(model::Game* game)
 	}
 	ShowMessage("");
 }
+
+void view::Output::ShowPartitions(model::Game* game)
+{
+	auto players = game->GetCurrentPlayer();
+
+	ShowMessage("Your partitions amount:");
+
+	std::cout << players->GetPartitionsAmount() << std::endl;
+}

@@ -11,7 +11,6 @@ void Controller::Prepare()
 	m_output   = std::make_shared<view::Output>();
 	m_quoridor = std::make_shared<model::Game>();
 
-
 	while (true)
 	{
 		m_quoridor->ResetGame();
@@ -61,6 +60,7 @@ void Controller::Start()
 		}
 
 		m_output->ShowGameState(m_quoridor.get());
+		m_output->ShowPartitions(m_quoridor.get());
 
 		auto cur_player = m_quoridor->GetCurrentPlayer();
 

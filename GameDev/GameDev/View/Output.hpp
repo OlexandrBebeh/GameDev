@@ -15,6 +15,7 @@ namespace view
 		void ShowGameState(model::Game*);
 		void ShowPositions(model::Game*);
 		void ShowPossibleMoves(model::Game*);
+		void ShowPartitions(model::Game*);
 		void StartMenu();
 		void ShowHelp();
 
