@@ -14,6 +14,6 @@ Program can show you possible moves or tell that you type wrong move.
 ![example 3](/images/Move.png)
 
 After win or type 'exit' you can again play game:
-![example 4](/images/EXit.png)
+![example 4](/images/Exit.png)
 ![example 5](/images/WinAndContinurGame.png)
 
