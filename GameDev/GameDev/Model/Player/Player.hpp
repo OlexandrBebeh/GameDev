@@ -4,6 +4,7 @@
 
 namespace model
 {
+	class Game;
 
 	enum class PlayerType
 	{
@@ -42,7 +43,7 @@ namespace model
 		virtual bool HasConsoleInput() const;
 		virtual bool HasAILogic() const;
 
-		virtual Move GetMove();
+		virtual Move GetMove(Game*);
 
 	protected:
 		Position m_pos;
@@ -53,5 +54,6 @@ namespace model
 		PlayerType m_player_type{ PlayerType::no_player };
 
 		std::shared_ptr<Field> m_field;
+
 	};
 }

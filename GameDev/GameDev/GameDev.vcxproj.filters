@@ -64,6 +64,9 @@
     <Filter Include="Исходные файлы\Model\Strategy">
       <UniqueIdentifier>{eff2d127-0510-41b8-b1c8-ed81640390f5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Файлы заголовков\Model\Strategy\MonteCarlo">
+      <UniqueIdentifier>{ad7569d0-8445-4abb-88c8-f09917b44198}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameDev.cpp">
@@ -97,6 +100,9 @@
       <Filter>Исходные файлы\Model\Game</Filter>
     </ClCompile>
     <ClCompile Include="Model\Strategy\BaseStrategy.cpp">
+      <Filter>Исходные файлы\Model\Strategy</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\Strategy\MonteCarlo\MonteCarloStartegy.cpp">
       <Filter>Исходные файлы\Model\Strategy</Filter>
     </ClCompile>
   </ItemGroup>
@@ -136,6 +142,12 @@
     </ClInclude>
     <ClInclude Include="Model\Game\Field.hpp">
       <Filter>Файлы заголовков\Model\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Strategy\MonteCarlo\MonteCarloNode.hpp">
+      <Filter>Файлы заголовков\Model\Strategy\MonteCarlo</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Strategy\MonteCarlo\MonteCarloStrategy.hpp">
+      <Filter>Файлы заголовков\Model\Strategy\MonteCarlo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

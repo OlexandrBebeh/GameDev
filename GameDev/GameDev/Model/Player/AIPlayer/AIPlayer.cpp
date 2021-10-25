@@ -1,4 +1,5 @@
 #include "AIPlayer.hpp"
+#include "../../Game/Game.hpp"
 
 using namespace model;
 
@@ -16,7 +17,7 @@ bool AIPlayer::HasAILogic() const
 	return true;
 }
 
-Move AIPlayer::GetMove()
+Move AIPlayer::GetMove(Game* game)
 {
-	return strategy.GetMove(m_field.get(),m_pos,m_player_win_row);
+	return strategy->GetMove(game, m_player_win_row);
 }

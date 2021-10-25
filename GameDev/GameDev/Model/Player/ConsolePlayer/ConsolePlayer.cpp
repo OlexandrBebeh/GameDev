@@ -11,4 +11,7 @@ ConsolePlayer::~ConsolePlayer()
 {
 }
 
-//bool ConsolePlayer::HasConsoleInput() const
+bool ConsolePlayer::HasConsoleInput() const
+{
+	return true;
+}

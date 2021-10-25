@@ -13,7 +13,6 @@ void Controller::Prepare()
 
 	while (true)
 	{
-		m_quoridor->ResetGame();
 		while (true)
 		{
 			m_output->StartMenu();
@@ -44,6 +43,8 @@ void Controller::Prepare()
 		}
 
 		Start();
+
+		m_quoridor->ResetGame();
 	}
 };
 
@@ -55,7 +56,10 @@ void Controller::Start()
 	{
 		if (m_quoridor->CheckWin() >= 0)
 		{
-			m_output->ShowMessage("Congrads player:" + m_quoridor->CheckWin());
+			m_output->ShowMessage("Congrads player:");
+
+			m_output->ShowMessage(std::to_string(m_quoridor->CheckWin()));
+			
 			return;
 		}
 
@@ -97,7 +101,7 @@ void Controller::Start()
 		}
 		if (cur_player->HasAILogic())
 		{
-			move = cur_player->GetMove();
+			move = cur_player->GetMove(m_quoridor.get());
 		}
 
 		auto moves = m_quoridor->GetPossibleMoves(m_quoridor->GetCurrentPlayerId());

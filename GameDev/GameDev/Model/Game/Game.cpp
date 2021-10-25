@@ -10,9 +10,19 @@ Game::Game()
 	m_player_start_pos.push_back({ 0,4 });
 	m_player_start_pos.push_back({ 8,4 });
 	m_field = std::make_shared<Field>();
-	m_field->GameReset();
 	Test();
-	
+}
+
+model::Game::Game(Game* game)
+{
+	this->m_field = std::make_shared<Field>(*game->m_field.get());
+
+	for (auto player : game->m_players)
+	{
+		this->m_players.insert(player);
+	}
+	this->m_current_player = game->m_current_player;
+	this->m_players_amount = game->m_players_amount;
 }
 
 Game::~Game()
@@ -301,6 +311,11 @@ void Game::NextPlayer()
 	{
 		m_current_player++;
 	}
+}
+
+void model::Game::RevertMove()
+{
+
 }
 
 void Game::Test()

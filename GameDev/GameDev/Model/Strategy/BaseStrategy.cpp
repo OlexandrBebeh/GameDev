@@ -1,23 +1,24 @@
 #include "BaseStrategy.hpp"
+#include "../Game/Game.hpp"
 
 using namespace model;
 
-Move BaseStrategy::GetMove(Field* field, Position pos, int target)
+Move BaseStrategy::GetMove(Game* game, int target)
 {
 	Move a;
 	a.first = rand() % 3 + 1;
 	if (a.first == 1)
 	{
-		auto moves = field->GetPossibleFigureMoves(pos);
+		auto moves = game->GetPossibleFigureMoves(game->GetCurrentPlayerId());
 		a.second = moves[rand() % moves.size()];
 	}
 	else if (a.first == 2)
 	{
-		a.second = field->m_possible_vertical_partitions[rand() % field->m_possible_vertical_partitions.size()];
+		a.second = game->GetPossibleVerticalPatrtitions()[rand() % game->GetPossibleVerticalPatrtitions().size()];
 	}
 	else
 	{
-		a.second = field->m_possible_horizontal_partitions[rand() % field->m_possible_horizontal_partitions.size()];
+		a.second = game->GetPossibleHorizontalPatrtitions()[rand() % game->GetPossibleHorizontalPatrtitions().size()];
 
 	}
 

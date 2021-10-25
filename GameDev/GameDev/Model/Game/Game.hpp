@@ -12,6 +12,7 @@ namespace model
 	{
 	public:
 		Game();
+		Game(Game* game);
 		~Game();
 		Player* GetCurrentPlayer() const;
 		void AddPlayer(Player* player);
@@ -35,6 +36,8 @@ namespace model
 		std::vector<Move> GetPossibleMoves();
 		std::vector<Move> GetPossibleMoves(int player);
 		void NextPlayer();
+
+		void RevertMove();
 
 		void Test();
 

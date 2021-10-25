@@ -4,11 +4,13 @@
 
 namespace model
 {
+	class Game;
+
 	class BaseStrategy
 	{
 	public:
 		BaseStrategy() {};
 		~BaseStrategy() {};
-		Move GetMove(Field*, Position pos, int target);
+		virtual Move GetMove(Game* game, int target);
 	};
 }

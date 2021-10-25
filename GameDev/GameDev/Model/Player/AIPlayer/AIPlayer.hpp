@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Player.hpp"
-#include "../../Strategy/BaseStrategy.hpp"
+#include "../../Strategy/MonteCarlo/MonteCarloStrategy.hpp"
 
 namespace model
 {
@@ -11,9 +11,9 @@ namespace model
 		AIPlayer();
 		~AIPlayer();
 		bool HasAILogic() const override;
-		Move GetMove() override;
+		Move GetMove(Game*) override;
 	private:
-		BaseStrategy strategy = BaseStrategy();
+		BaseStrategy *strategy = new MonteCarloStrategy();
 
 	};
 }

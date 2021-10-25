@@ -148,6 +148,7 @@
     <ClCompile Include="Model\Player\ConsolePlayer\ConsolePlayer.cpp" />
     <ClCompile Include="Model\Player\Player.cpp" />
     <ClCompile Include="Model\Strategy\BaseStrategy.cpp" />
+    <ClCompile Include="Model\Strategy\MonteCarlo\MonteCarloStartegy.cpp" />
     <ClCompile Include="View\Input.cpp" />
     <ClCompile Include="View\Output.cpp" />
   </ItemGroup>
@@ -162,6 +163,8 @@
     <ClInclude Include="Model\Player\Player.hpp" />
     <ClInclude Include="Model\Player\PlayerFactory.hpp" />
     <ClInclude Include="Model\Strategy\BaseStrategy.hpp" />
+    <ClInclude Include="Model\Strategy\MonteCarlo\MonteCarloNode.hpp" />
+    <ClInclude Include="Model\Strategy\MonteCarlo\MonteCarloStrategy.hpp" />
     <ClInclude Include="View\Input.hpp" />
     <ClInclude Include="View\Output.hpp" />
   </ItemGroup>

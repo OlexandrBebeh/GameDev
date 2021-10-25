@@ -1,4 +1,5 @@
 #include "Player.hpp"
+#include "../Game/Game.hpp"
 
 using namespace model;
 
@@ -45,7 +46,7 @@ bool Player::HasAILogic() const
 	return false;
 }
 
-Move Player::GetMove()
+Move Player::GetMove(Game*)
 {
 	Move a;
 	return a;
