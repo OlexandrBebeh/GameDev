@@ -16,7 +16,7 @@ namespace model
 
 		MonteCarloNode* parent;
 
-		bool all_visited{ false };
+		bool has_unvisited{ true };
 
 		std::vector<MonteCarloNode*> childs = std::vector<MonteCarloNode*>();
 

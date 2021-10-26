@@ -19,7 +19,7 @@ model::Game::Game(Game* game)
 
 	for (auto player : game->m_players)
 	{
-		this->m_players.insert(player);
+		this->m_players.emplace(player.first, std::make_shared<Player>(*player.second.get()));
 	}
 	this->m_current_player = game->m_current_player;
 	this->m_players_amount = game->m_players_amount;
@@ -138,6 +138,36 @@ void Game::MakeMove(model::Move move)
 	NextPlayer();
 }
 
+void model::Game::MakeTrustMove(model::Move move)
+{
+	if (move.first == 1)
+	{
+		MakeFigureMove(move.second);
+	}
+	else if (move.first == 2)
+	{
+
+		m_field->SetVerticalPartition(move.second);
+		GetCurrentPlayer()->SetPartitionsAmount(GetCurrentPlayer()->GetPartitionsAmount() - 1);
+	}
+	else if (move.first == 3)
+	{
+
+		m_field->SetHorizontalPartition(move.second);
+
+		GetCurrentPlayer()->SetPartitionsAmount(GetCurrentPlayer()->GetPartitionsAmount() - 1);
+	}
+	else
+	{
+		throw std::exception{ "Game::MakeMove - wrong move" };
+	}
+
+	m_field->m_possible_horizontal_partitions = CheckPossibleHorizontalPartitions();
+	m_field->m_possible_vertical_partitions = CheckPossibleVerrticalPartitions();
+
+	NextPlayer();
+}
+
 bool Game::IsGameEnd()
 {
 	return false;
@@ -225,7 +255,7 @@ std::vector<Position> Game::CheckPossibleVerrticalPartitions()
 					{
 						m_field->SetVerticalPartition({ i,j });
 						std::vector<Position> positions;
-						is_valid = m_field->Dijkstra(player.second->GetPosition(),
+						is_valid = m_field->AStar(player.second->GetPosition(),
 							positions,
 							player.second->GetPlayerWinRow());
 						if (!is_valid)
@@ -264,7 +294,7 @@ std::vector<Position> Game::CheckPossibleHorizontalPartitions()
 					{
 						m_field->SetHorizontalPartition({ i,j });
 						std::vector<Position> positions;
-						is_valid = m_field->Dijkstra(player.second->GetPosition(), 
+						is_valid = m_field->AStar(player.second->GetPosition(), 
 													 positions,
 													 player.second->GetPlayerWinRow());
 						if (!is_valid)

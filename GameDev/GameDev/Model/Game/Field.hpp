@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include <map>
+#include <set>
 #include "../DataTypes/Position.hpp"
 
 namespace model
@@ -23,7 +25,7 @@ namespace model
 		};
 		void GameReset();
 
-		bool Dijkstra(Position start, std::vector<Position>& path, int target);
+		bool AStar(Position start, std::vector<Position>& path, int target);
 
 		std::vector<Position> GetMovesToDirect(Position, Position);
 		std::vector<Position> GetPossibleFigureMoves(Position);
@@ -51,5 +53,8 @@ namespace model
 		std::vector<Position> m_possible_vertical_partitions;
 
 		std::vector<Position> m_possible_horizontal_partitions;
+
+		std::map<int, int> m_distances;
+		std::map<int, Position> m_prev_node;
 	};
 }

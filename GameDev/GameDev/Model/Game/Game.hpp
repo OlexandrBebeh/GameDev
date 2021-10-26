@@ -22,6 +22,9 @@ namespace model
 		void MakeFigureMove(Position);
 
 		void MakeMove(model::Move move);
+
+		void MakeTrustMove(model::Move move);
+
 		std::vector<Position> GetPossibleFigureMoves(int player_id);
 
 		std::vector<std::vector<int>> GetField() const;

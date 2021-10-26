@@ -1,6 +1,5 @@
 #include "Field.hpp"
-#include <map>
-#include <set>
+
 
 using namespace model;
 
@@ -54,6 +53,16 @@ void Field::GameReset()
 		{
 			m_possible_horizontal_partitions.push_back({ i,j });
 			m_possible_vertical_partitions.push_back({ i,j });
+		}
+	}
+
+
+	for (int col = 0; col < FIELD_SIZE; col++)
+	{
+		for (int row = 0; row < FIELD_SIZE; row++)
+		{
+			m_distances[row + col * FIELD_SIZE] = 1000000;
+			m_prev_node[row + col * FIELD_SIZE] = { -1,-1 };
 		}
 	}
 }
@@ -267,25 +276,20 @@ void Field::DeleteVerticalPartition(Position pos)
 	m_vertical_partitions[pos.GetVertical() + 1][pos.GetHorizontal()] = 0;
 }
 
-bool Field::Dijkstra(Position start, std::vector<Position>& path, int target)
+bool Field::AStar(Position start, std::vector<Position>& path, int target)
 {
-	std::map<int, int> distances;
-	std::map<int, Position> prev_node;
+	std::map<int, int> distances = m_distances;
+	std::map<int, Position> prev_node = m_prev_node;
 
 	auto cmp = [&](Position a, Position b)
 	{
-		return distances[a.GetHorizontal() + a.GetVertical() * FIELD_SIZE] < distances[b.GetHorizontal() + b.GetVertical() * FIELD_SIZE];
+
+		return distances[a.GetHorizontal() + a.GetVertical() * FIELD_SIZE]
+			< distances[b.GetHorizontal() + b.GetVertical() * FIELD_SIZE];
+		
 	};
 	std::multiset<Position, decltype(cmp)> queue(cmp);
-
-	for (int col = 0; col < FIELD_SIZE; col++)
-	{
-		for (int row = 0; row < FIELD_SIZE; row++)
-		{
-			distances[row + col * FIELD_SIZE] = 1000;
-			prev_node[row + col * FIELD_SIZE] = { -1,-1 };
-		}
-	}
+	
 	distances[start.GetHorizontal() + start.GetVertical() * FIELD_SIZE] = 0;
 	prev_node[start.GetHorizontal() + start.GetVertical() * FIELD_SIZE] = Position{ -1,-1 };
 
@@ -309,10 +313,10 @@ bool Field::Dijkstra(Position start, std::vector<Position>& path, int target)
 			return true;
 		}
 
-		int travelDist = distances[position.GetHorizontal() + position.GetVertical() * FIELD_SIZE];
+		int travelDist = abs(target - position.GetVertical());
 		for (auto pos : GetPossibleFigureMoves(position))
 		{
-			int dist = travelDist + 1;
+			int dist = abs(target - pos.GetVertical());
 			if (dist < distances[pos.GetHorizontal() + pos.GetVertical() * FIELD_SIZE])
 			{
 				distances[pos.GetHorizontal() + pos.GetVertical() * FIELD_SIZE] = dist;
