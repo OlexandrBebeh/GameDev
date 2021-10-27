@@ -10,8 +10,6 @@ namespace model
 		int win{ 0 };
 		int games{ 0 };
 
-		int depth{ 0 };
-
 		Move* move;
 
 		MonteCarloNode* parent;

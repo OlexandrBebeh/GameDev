@@ -2,6 +2,7 @@
 #include "MonteCarloNode.hpp"
 #include <algorithm>
 #include <random>
+#include "../../../View/Output.hpp"
 
 using namespace model;
 
@@ -21,7 +22,7 @@ MonteCarloNode* model::MonteCarloStrategy::GetNextToExplore(MonteCarloNode* node
 
 		for (auto move : moves)
 		{
-			node->childs.push_back(new MonteCarloNode(node, &move));
+			node->childs.push_back(new MonteCarloNode(node,new Move(move)));
 		}
 	}
 
@@ -34,14 +35,20 @@ MonteCarloNode* model::MonteCarloStrategy::GetNextToExplore(MonteCarloNode* node
 		{
 			node->has_unvisited = false;
 
-			return GetNextToExplore(FindBest(node));
+			auto best_move = FindBest(node);
+			m_game.MakeMove(*best_move->move);
+			return GetNextToExplore(best_move);
 		}
+
+		m_game.MakeMove(*(*unexplored)->move);
 
 		return *unexplored;
 	}
 	else
 	{
-		return GetNextToExplore(FindBest(node));
+		auto best_move = FindBest(node);
+		m_game.MakeMove(*best_move->move);
+		return GetNextToExplore(best_move);
 	}
 }
 
@@ -52,19 +59,128 @@ double model::MonteCarloStrategy::CalculateUCB(MonteCarloNode* node)
 
 MonteCarloNode* model::MonteCarloStrategy::FindBest(MonteCarloNode* node)
 {
-	double best = 0;
+	double best = -1;
 	MonteCarloNode* best_node = nullptr;
 	for (auto child : node->childs)
 	{
-		auto t = CalculateUCB(child);
-		if (t > best)
+		if (child->games > 0)
 		{
-			best = t;
-			best_node = child;
+			auto t = CalculateUCB(child);
+			if (t > best)
+			{
+				best = t;
+				best_node = child;
+			}
 		}
 	}
 
 	return best_node;
+}
+
+int model::MonteCarloStrategy::Simulate()
+{
+	int counter = 0;
+	auto v = view::Output();
+
+	while (true)
+	{
+		auto move = GetRandomMove();
+
+		for (int i = 0; i < 9; i++)
+		{
+			for (int j = 0; j < 9; j++)
+			{
+				std::cout << m_game.GetField()[i][j] << ",";
+			}
+			std::cout << std::endl;
+		}
+		std::cout << std::endl;
+		for (int i = 0; i < 9; i++)
+		{
+			for (int j = 0; j < 8; j++)
+			{
+				std::cout << m_game.GetVerticalPatrtitions()[i][j] << ",";
+			}
+			std::cout << std::endl;
+		}
+		std::cout << std::endl;
+		for (int i = 0; i < 8; i++)
+		{
+			for (int j = 0; j < 9; j++)
+			{
+				std::cout << m_game.GetHorizontalPatrtitions()[i][j] << ",";
+			}
+			std::cout << std::endl;
+		}
+		std::cout << std::endl;
+		for (int i = 0; i < 8; i++)
+		{
+			for (int j = 0; j < 8; j++)
+			{
+				std::cout << m_game.GetCrosstPatritions()[i][j] << ",";
+			}
+			std::cout << std::endl;
+		}
+		std::cout << std::endl;
+
+		m_game.MakeMove(move);
+		int winner = m_game.CheckWin();
+		counter++;
+		if (winner != -1)
+		{
+			if (winner == m_target_player)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+
+	return false;
+}
+
+void model::MonteCarloStrategy::UpdateTree(MonteCarloNode* node, int win)
+{
+	auto temp = node;
+	while (temp != nullptr)
+	{
+		temp->games++;
+		temp->win += win;
+		temp = temp->parent;
+	}
+}
+
+Move model::MonteCarloStrategy::GetRandomMove()
+{
+	if (rand() % 101 < 60)
+	{
+		return m_game.GetShortesFigureMove();
+	}
+	else
+	{
+		if (rand() % 2 == 0)
+		{
+			auto moves = m_game.GetPossibleVerticalPatrtitions();
+
+			if (moves.empty())
+			{
+				return m_game.GetShortesFigureMove();
+			}
+			return Move(2,moves[rand() % moves.size()]);
+		}
+		else
+		{
+			auto moves = m_game.GetPossibleHorizontalPatrtitions();
+			if (moves.empty())
+			{
+				return m_game.GetShortesFigureMove();
+			}
+			return Move(3, moves[rand() % moves.size()]);
+		}
+	}
 }
 
 Move MonteCarloStrategy::GetMove(Game* game, int target)
@@ -73,13 +189,15 @@ Move MonteCarloStrategy::GetMove(Game* game, int target)
 
 	MonteCarloNode root;
 	int counter = 0;
+	m_target_player = game->GetCurrentPlayerId();
 
-
-	while (CheckTime(start))
+	while (counter < 100)
 	{
 		m_game = game;
 		auto node = GetNextToExplore(&root);
+		UpdateTree(node, Simulate());
 		counter++;
 	}
-	return Move();
+	auto move = *FindBest(&root)->move;
+	return move;
 }

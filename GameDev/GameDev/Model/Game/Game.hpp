@@ -47,6 +47,8 @@ namespace model
 		int CheckWin();
 
 		void ResetGame();
+
+		Move GetShortesFigureMove();
 	protected:
 		std::map<int, std::shared_ptr<Player>> m_players;
 

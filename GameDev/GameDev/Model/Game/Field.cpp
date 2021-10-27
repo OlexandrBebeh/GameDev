@@ -124,7 +124,7 @@ std::vector<Position> Field::GetMovesToDirect(Position start, Position dir = { 0
 			{
 				if (start.GetHorizontal() + 1 >= PARTITION_SIZE
 					|| start.GetVertical() >= PARTITION_SIZE
-					&& m_vertical_partitions[start.GetVertical()][start.GetHorizontal() + 1] == 1)
+					|| m_vertical_partitions[start.GetVertical()][start.GetHorizontal() + 1] == 1)
 				{
 					jump_blocked = true;
 				}
@@ -221,8 +221,8 @@ std::vector<Position> Field::GetMovesToDirect(Position start, Position dir = { 0
 			}
 			else
 			{
-				if (start.GetHorizontal() + 1 < FIELD_SIZE
-					&& start.GetVertical() + dir.GetVertical() < PARTITION_SIZE
+				if (start.GetHorizontal() < PARTITION_SIZE
+					&& start.GetVertical() + dir.GetVertical() <= PARTITION_SIZE
 					&& start.GetVertical() + dir.GetVertical() >= 0
 					&& m_vertical_partitions[start.GetVertical() + dir.GetVertical()][start.GetHorizontal()] != 1)
 				{
@@ -231,7 +231,7 @@ std::vector<Position> Field::GetMovesToDirect(Position start, Position dir = { 0
 				}
 
 				if (start.GetHorizontal() - 1 >= 0
-					&& start.GetVertical() + dir.GetVertical() < PARTITION_SIZE
+					&& start.GetVertical() + dir.GetVertical() <= PARTITION_SIZE
 					&& start.GetVertical() + dir.GetVertical() >= 0
 					&& m_vertical_partitions[start.GetVertical() + dir.GetVertical()][start.GetHorizontal() - 1] != 1)
 				{
@@ -294,12 +294,14 @@ bool Field::AStar(Position start, std::vector<Position>& path, int target)
 	prev_node[start.GetHorizontal() + start.GetVertical() * FIELD_SIZE] = Position{ -1,-1 };
 
 	queue.insert(start);
+	int player = m_field[start.GetVertical()][start.GetHorizontal()];
+	int putb = 0;
 	while (queue.size() > 0)
 	{
 		auto position = *queue.begin();
 
 		queue.erase(queue.begin());
-
+		m_field[position.GetVertical()][position.GetHorizontal()] = player;
 		if (position.GetVertical() == target)
 		{
 			path = std::vector<Position>();
@@ -309,11 +311,13 @@ bool Field::AStar(Position start, std::vector<Position>& path, int target)
 				path.push_back(p);
 				p = prev_node[p.GetHorizontal() + p.GetVertical() * FIELD_SIZE];
 			}
-
+			m_field[position.GetVertical()][position.GetHorizontal()] = -1;
+			m_field[start.GetVertical()][start.GetHorizontal()] = player;
 			return true;
 		}
 
-		int travelDist = abs(target - position.GetVertical());
+		int travelDist = putb + abs(target - position.GetVertical());
+		putb++;
 		for (auto pos : GetPossibleFigureMoves(position))
 		{
 			int dist = abs(target - pos.GetVertical());
@@ -324,7 +328,10 @@ bool Field::AStar(Position start, std::vector<Position>& path, int target)
 				queue.insert(pos);
 			}
 		}
+
+		m_field[position.GetVertical()][position.GetHorizontal()] = -1;
 	}
+	m_field[start.GetVertical()][start.GetHorizontal()] = player;
 
 	return false;
 }
