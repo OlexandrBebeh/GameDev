@@ -13,12 +13,12 @@ namespace model
 		Position() :  vertical(-1), horizontal(-1) {};
 		~Position() {};
 
-		int& GetHorizontal()
+		const int GetHorizontal() const
 		{
 			return horizontal;
 		}
 
-		int& GetVertical()
+		const int GetVertical() const
 		{
 			return vertical;
 		}
@@ -30,8 +30,6 @@ namespace model
 		
 		}
 
-
-
 		bool operator!=(Position pos)
 		{
 			return pos.horizontal != this->horizontal
@@ -42,6 +40,18 @@ namespace model
 		{
 			return (pos.vertical * 9 + pos.horizontal)
 				< (this->vertical * 9 + this->horizontal);
+		}
+
+		Position operator-(const Position& pos) const
+		{
+			return Position(this->vertical - pos.vertical,
+				this->horizontal - pos.horizontal);
+		}
+
+		Position operator+(const Position& pos) const
+		{
+			return Position(this->vertical + pos.vertical,
+				this->horizontal + pos.horizontal);
 		}
 
 		friend std::ostream& operator<<(std::ostream& os, const Position& pos)

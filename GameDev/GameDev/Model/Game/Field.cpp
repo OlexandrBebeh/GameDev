@@ -65,6 +65,18 @@ void Field::GameReset()
 			m_prev_node[row + col * FIELD_SIZE] = { -1,-1 };
 		}
 	}
+	m_not_blocked_horizontal_partitions.clear();
+	m_not_blocked_vertical_partitions.clear();
+
+	for (int i = 0; i < PARTITION_SIZE; i++)
+	{
+		for (int j = 0; j < PARTITION_SIZE; j++)
+		{
+			m_not_blocked_horizontal_partitions.push_back({ i,j });
+			m_not_blocked_vertical_partitions.push_back({ i,j });
+
+		}
+	}
 }
 
 
@@ -76,13 +88,41 @@ void Field::SetVerticalPartition(Position position)
 	m_vertical_partitions[position.GetVertical() + 1][position.GetHorizontal()] = 1;
 }
 
+void Field::RemoveVerticalPartitionFromAvailable(Position position)
+{
+	m_not_blocked_horizontal_partitions.erase(find(m_not_blocked_horizontal_partitions.begin(), m_not_blocked_horizontal_partitions.end(), position));
+	m_not_blocked_vertical_partitions.erase(find(m_not_blocked_vertical_partitions.begin(), m_not_blocked_vertical_partitions.end(), position));
+
+	auto it = find(m_not_blocked_vertical_partitions.begin(), m_not_blocked_vertical_partitions.end(), Position{ position.GetVertical() + 1,position.GetHorizontal() });
+	if (it != m_not_blocked_vertical_partitions.end())
+		m_not_blocked_vertical_partitions.erase(it);
+
+	it = find(m_not_blocked_vertical_partitions.begin(), m_not_blocked_vertical_partitions.end(), Position{ position.GetVertical() - 1,position.GetHorizontal() });
+	if (it != m_not_blocked_vertical_partitions.end())
+		m_not_blocked_vertical_partitions.erase(it);
+
+}
+
 void Field::SetHorizontalPartition(Position position)
 {
 	m_horizontal_partitions[position.GetVertical()][position.GetHorizontal()] = 1;
 	m_crosst_partitions[position.GetVertical()][position.GetHorizontal()] = -1;
 
 	m_horizontal_partitions[position.GetVertical()][position.GetHorizontal() + 1] = 1;
+}
 
+void model::Field::RemoveHorizontalPartitionFromAvailable(Position position)
+{
+	m_not_blocked_horizontal_partitions.erase(find(m_not_blocked_horizontal_partitions.begin(), m_not_blocked_horizontal_partitions.end(), position));
+	m_not_blocked_vertical_partitions.erase(find(m_not_blocked_vertical_partitions.begin(), m_not_blocked_vertical_partitions.end(), position));
+
+	auto it = find(m_not_blocked_horizontal_partitions.begin(), m_not_blocked_horizontal_partitions.end(), Position{ position.GetVertical(),position.GetHorizontal() + 1 });
+	if (it != m_not_blocked_horizontal_partitions.end())
+		m_not_blocked_horizontal_partitions.erase(it);
+	
+	it = find(m_not_blocked_horizontal_partitions.begin(), m_not_blocked_horizontal_partitions.end(), Position{ position.GetVertical(),position.GetHorizontal() - 1 });
+	if (it != m_not_blocked_horizontal_partitions.end())
+		m_not_blocked_horizontal_partitions.erase(it);
 }
 
 std::vector<Position> Field::GetMovesToDirect(Position start, Position dir = { 0,0 })
@@ -295,7 +335,6 @@ bool Field::AStar(Position start, std::vector<Position>& path, int target)
 
 	queue.insert(start);
 	int player = m_field[start.GetVertical()][start.GetHorizontal()];
-	int putb = 0;
 	while (queue.size() > 0)
 	{
 		auto position = *queue.begin();
@@ -316,11 +355,11 @@ bool Field::AStar(Position start, std::vector<Position>& path, int target)
 			return true;
 		}
 
-		int travelDist = putb + abs(target - position.GetVertical());
-		putb++;
+		int travelDist = abs(target - position.GetVertical());
+		int travelWay = distances[position.GetHorizontal() + position.GetVertical() * FIELD_SIZE] - abs(target - position.GetVertical());
 		for (auto pos : GetPossibleFigureMoves(position))
 		{
-			int dist = abs(target - pos.GetVertical());
+			int dist = abs(target - pos.GetVertical()) + travelWay + 1;
 			if (dist < distances[pos.GetHorizontal() + pos.GetVertical() * FIELD_SIZE])
 			{
 				distances[pos.GetHorizontal() + pos.GetVertical() * FIELD_SIZE] = dist;

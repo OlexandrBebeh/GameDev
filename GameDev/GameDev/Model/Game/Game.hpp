@@ -10,6 +10,8 @@ namespace model
 {
 	class Game
 	{
+	protected:
+		void CleanPositions(std::vector<Position>&);
 	public:
 		Game();
 		Game(Game* game);
@@ -24,6 +26,8 @@ namespace model
 		void MakeMove(model::Move move);
 
 		void MakeTrustMove(model::Move move);
+
+		void UpdatePossiblePartitions();
 
 		std::vector<Position> GetPossibleFigureMoves(int player_id);
 

@@ -3,6 +3,7 @@
 #include <ctime> 
 #include <chrono>
 #include <iomanip>
+#include <vector>
 
 int main()
 {

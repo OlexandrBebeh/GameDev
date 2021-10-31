@@ -86,43 +86,6 @@ int model::MonteCarloStrategy::Simulate()
 	{
 		auto move = GetRandomMove();
 
-		for (int i = 0; i < 9; i++)
-		{
-			for (int j = 0; j < 9; j++)
-			{
-				std::cout << m_game.GetField()[i][j] << ",";
-			}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
-		for (int i = 0; i < 9; i++)
-		{
-			for (int j = 0; j < 8; j++)
-			{
-				std::cout << m_game.GetVerticalPatrtitions()[i][j] << ",";
-			}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
-		for (int i = 0; i < 8; i++)
-		{
-			for (int j = 0; j < 9; j++)
-			{
-				std::cout << m_game.GetHorizontalPatrtitions()[i][j] << ",";
-			}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
-		for (int i = 0; i < 8; i++)
-		{
-			for (int j = 0; j < 8; j++)
-			{
-				std::cout << m_game.GetCrosstPatritions()[i][j] << ",";
-			}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
-
 		m_game.MakeMove(move);
 		int winner = m_game.CheckWin();
 		counter++;

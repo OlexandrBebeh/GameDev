@@ -36,7 +36,10 @@ namespace model
 		void DeleteVerticalPartition(Position pos);
 
 		void SetVerticalPartition(Position);
+		void RemoveVerticalPartitionFromAvailable(Position position);
 		void SetHorizontalPartition(Position);
+		void RemoveHorizontalPartitionFromAvailable(Position position);
+
 
 		std::vector<std::vector<int>> m_field;
 
@@ -56,5 +59,11 @@ namespace model
 
 		std::map<int, int> m_distances;
 		std::map<int, Position> m_prev_node;
+
+	public:
+
+		std::vector<Position> m_not_blocked_vertical_partitions;
+
+		std::vector<Position> m_not_blocked_horizontal_partitions;
 	};
 }
