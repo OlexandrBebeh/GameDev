@@ -90,10 +90,13 @@ void Field::SetVerticalPartition(Position position)
 
 void Field::RemoveVerticalPartitionFromAvailable(Position position)
 {
-	m_not_blocked_horizontal_partitions.erase(find(m_not_blocked_horizontal_partitions.begin(), m_not_blocked_horizontal_partitions.end(), position));
 	m_not_blocked_vertical_partitions.erase(find(m_not_blocked_vertical_partitions.begin(), m_not_blocked_vertical_partitions.end(), position));
+	
+	auto it = find(m_not_blocked_horizontal_partitions.begin(), m_not_blocked_horizontal_partitions.end(), position);
+	if (it != m_not_blocked_horizontal_partitions.end())
+		m_not_blocked_horizontal_partitions.erase(it);
 
-	auto it = find(m_not_blocked_vertical_partitions.begin(), m_not_blocked_vertical_partitions.end(), Position{ position.GetVertical() + 1,position.GetHorizontal() });
+	it = find(m_not_blocked_vertical_partitions.begin(), m_not_blocked_vertical_partitions.end(), Position{ position.GetVertical() + 1,position.GetHorizontal() });
 	if (it != m_not_blocked_vertical_partitions.end())
 		m_not_blocked_vertical_partitions.erase(it);
 
@@ -114,9 +117,12 @@ void Field::SetHorizontalPartition(Position position)
 void model::Field::RemoveHorizontalPartitionFromAvailable(Position position)
 {
 	m_not_blocked_horizontal_partitions.erase(find(m_not_blocked_horizontal_partitions.begin(), m_not_blocked_horizontal_partitions.end(), position));
-	m_not_blocked_vertical_partitions.erase(find(m_not_blocked_vertical_partitions.begin(), m_not_blocked_vertical_partitions.end(), position));
 
-	auto it = find(m_not_blocked_horizontal_partitions.begin(), m_not_blocked_horizontal_partitions.end(), Position{ position.GetVertical(),position.GetHorizontal() + 1 });
+	auto it = find(m_not_blocked_vertical_partitions.begin(), m_not_blocked_vertical_partitions.end(), position);
+	if (it != m_not_blocked_vertical_partitions.end())
+		m_not_blocked_vertical_partitions.erase(it);
+
+	it = find(m_not_blocked_horizontal_partitions.begin(), m_not_blocked_horizontal_partitions.end(), Position{ position.GetVertical(),position.GetHorizontal() + 1 });
 	if (it != m_not_blocked_horizontal_partitions.end())
 		m_not_blocked_horizontal_partitions.erase(it);
 	

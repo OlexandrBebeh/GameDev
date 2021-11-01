@@ -54,7 +54,7 @@ MonteCarloNode* model::MonteCarloStrategy::GetNextToExplore(MonteCarloNode* node
 
 double model::MonteCarloStrategy::CalculateUCB(MonteCarloNode* node)
 {
-	return node->win/node->games + pow(2 * (std::log(node->parent->games) / node->games), 0.5);
+	return node->win/node->games + 1.4142 * pow((std::log(node->parent->games) / node->games), 0.5);
 }
 
 MonteCarloNode* model::MonteCarloStrategy::FindBest(MonteCarloNode* node)
@@ -79,16 +79,12 @@ MonteCarloNode* model::MonteCarloStrategy::FindBest(MonteCarloNode* node)
 
 int model::MonteCarloStrategy::Simulate()
 {
-	int counter = 0;
-	auto v = view::Output();
 
 	while (true)
 	{
 		auto move = GetRandomMove();
-
 		m_game.MakeMove(move);
 		int winner = m_game.CheckWin();
-		counter++;
 		if (winner != -1)
 		{
 			if (winner == m_target_player)
@@ -148,14 +144,20 @@ Move model::MonteCarloStrategy::GetRandomMove()
 
 Move MonteCarloStrategy::GetMove(Game* game, int target)
 {
+	if (m_counter < 2)
+	{
+		m_counter++;
+		return game->GetShortesFigureMove();
+	}
 	auto start = std::chrono::system_clock::now();
 
 	MonteCarloNode root;
 	int counter = 0;
 	m_target_player = game->GetCurrentPlayerId();
 
-	while (counter < 100)
+	while (counter < 100000)
 	{
+		std::cout << counter << std::endl;
 		m_game = game;
 		auto node = GetNextToExplore(&root);
 		UpdateTree(node, Simulate());

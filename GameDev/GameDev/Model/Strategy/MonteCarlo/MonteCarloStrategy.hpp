@@ -29,6 +29,7 @@ namespace model
 
 		Move GetRandomMove();
 
+		int m_counter = 0;
 	public:
 		Move GetMove(Game* game, int target);
 
