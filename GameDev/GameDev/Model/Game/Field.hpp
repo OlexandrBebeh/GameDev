@@ -49,7 +49,6 @@ namespace model
 
 		std::vector<std::vector<int>> m_crosst_partitions;
 
-		std::vector<std::pair<int, Move>> m_history;
 
 		std::vector<Position> directions;
 
@@ -61,6 +60,7 @@ namespace model
 		std::map<int, Position> m_prev_node;
 
 	public:
+		std::vector<std::pair<int, Move>> m_history;
 
 		std::vector<Position> m_not_blocked_vertical_partitions;
 

@@ -109,6 +109,17 @@ std::vector<Position> model::Game::GetPossibleHorizontalPatrtitions() const
 	return m_field->m_possible_horizontal_partitions;
 }
 
+void model::Game::SetPossibleVerticalPatrtitions(std::vector<Position> v)
+{
+	m_field->m_possible_vertical_partitions = v;
+}
+
+void model::Game::SetPossibleHorizontalPatrtitions(std::vector<Position> v)
+{
+	m_field->m_possible_horizontal_partitions = v;
+}
+
+
 
 void Game::MakeMove(model::Move move)
 {
@@ -167,12 +178,15 @@ void model::Game::MakeTrustMove(model::Move move)
 	else if (move.first == 2)
 	{
 		m_field->SetVerticalPartition(move.second);
+		m_field->RemoveVerticalPartitionFromAvailable(move.second);
+
 		GetCurrentPlayer()->SetPartitionsAmount(GetCurrentPlayer()->GetPartitionsAmount() - 1);
 	}
 	else if (move.first == 3)
 	{
 
 		m_field->SetHorizontalPartition(move.second);
+		m_field->RemoveHorizontalPartitionFromAvailable(move.second);
 
 		GetCurrentPlayer()->SetPartitionsAmount(GetCurrentPlayer()->GetPartitionsAmount() - 1);
 	}
@@ -392,6 +406,26 @@ std::vector<Move> model::Game::GetPossibleMoves(int player)
 	}
 
 	return moves;
+}
+
+std::vector<Move> model::Game::GetUsefullMoves(int player)
+{
+	std::vector<Move> moves;
+
+	for (auto pos : m_field->GetPossibleFigureMoves(m_players[player]->GetPosition()))
+	{
+		moves.emplace_back(1, pos);
+	}
+	if (m_players[player]->GetPartitionsAmount())
+	{
+		
+	}
+	return moves;
+}
+
+std::vector<std::pair<int, Move>> model::Game::GetHistory()
+{
+	return m_field->m_history;
 }
 
 void Game::MakeFigureMove(Position position)

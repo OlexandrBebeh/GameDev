@@ -4,6 +4,9 @@
 #include <random>
 #include "../../../View/Output.hpp"
 
+
+#define NUM_THREADS 8
+
 using namespace model;
 
 bool model::MonteCarloStrategy::CheckTime(std::chrono::time_point<std::chrono::system_clock> start)
@@ -54,7 +57,12 @@ MonteCarloNode* model::MonteCarloStrategy::GetNextToExplore(MonteCarloNode* node
 
 double model::MonteCarloStrategy::CalculateUCB(MonteCarloNode* node)
 {
-	return node->win/node->games + 1.4142 * pow((std::log(node->parent->games) / node->games), 0.5);
+	double a = node->win / node->games;
+	if (node->depth % 2 == 1)
+	{
+		a = 1 - a;
+	}
+	return a + 1.4142 * sqrt(std::log(node->parent->games) / node->games);
 }
 
 MonteCarloNode* model::MonteCarloStrategy::FindBest(MonteCarloNode* node)
@@ -82,8 +90,32 @@ int model::MonteCarloStrategy::Simulate()
 
 	while (true)
 	{
-		auto move = GetRandomMove();
-		m_game.MakeMove(move);
+		auto it = m_dict.find({ m_game.GetField(),m_game.GetCrosstPatritions() });
+		if (it == m_dict.end())
+		{
+			m_game.UpdatePossiblePartitions();
+			auto move = GetRandomMove();
+			m_dict[{ m_game.GetField(), m_game.GetCrosstPatritions() }] =
+			{ 
+				  m_game.GetPossibleVerticalPatrtitions(),
+				  m_game.GetPossibleHorizontalPatrtitions() 
+			};
+			m_game.MakeTrustMove(move);
+			m_game.UpdatePossiblePartitions();
+			m_dict[{ m_game.GetField(), m_game.GetCrosstPatritions() }] =
+			{
+				  m_game.GetPossibleVerticalPatrtitions(),
+				  m_game.GetPossibleHorizontalPatrtitions()
+			};
+		}
+		else
+		{
+			m_game.SetPossibleHorizontalPatrtitions(m_dict[{ m_game.GetField(), m_game.GetCrosstPatritions() }].second);
+			m_game.SetPossibleVerticalPatrtitions(m_dict[{ m_game.GetField(), m_game.GetCrosstPatritions() }].first);
+			auto move = GetRandomMove();
+			m_game.MakeTrustMove(move);
+		}
+
 		int winner = m_game.CheckWin();
 		if (winner != -1)
 		{
@@ -152,17 +184,32 @@ Move MonteCarloStrategy::GetMove(Game* game, int target)
 	auto start = std::chrono::system_clock::now();
 
 	MonteCarloNode root;
+	if (m_root != nullptr)
+	{
+		auto move = game->GetHistory().back().second;
+		
+		for (auto ch : m_root->childs)
+		{
+			if (move.first == ch->move->first && move.second == ch->move->second)
+			{
+				m_root = ch;
+				break;
+			}
+		}
+		m_root->parent = nullptr;
+		root = *m_root;
+	}
+	 
 	int counter = 0;
 	m_target_player = game->GetCurrentPlayerId();
-
-	while (counter < 100000)
+	
+	while (counter < 10000)
 	{
-		std::cout << counter << std::endl;
 		m_game = game;
 		auto node = GetNextToExplore(&root);
 		UpdateTree(node, Simulate());
 		counter++;
 	}
-	auto move = *FindBest(&root)->move;
-	return move;
+	m_root = FindBest(&root);
+	return *m_root->move;
 }

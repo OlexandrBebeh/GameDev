@@ -19,7 +19,6 @@ Move BaseStrategy::GetMove(Game* game, int target)
 	else
 	{
 		a.second = game->GetPossibleHorizontalPatrtitions()[rand() % game->GetPossibleHorizontalPatrtitions().size()];
-
 	}
 
 	return a;
