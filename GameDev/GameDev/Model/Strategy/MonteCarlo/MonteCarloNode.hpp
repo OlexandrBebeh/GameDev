@@ -8,7 +8,7 @@ namespace model
 	{
 	public:
 		int win{ 0 };
-		int games{ 0 };
+		double games{ 0 };
 		int depth{ 0 };
 		Move* move;
 

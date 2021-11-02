@@ -27,7 +27,7 @@ void Controller::Prepare()
 			}
 			else if (str == "2")
 			{
-				m_quoridor->AddPlayer(m_player_factory.GetPlayer(0));
+				m_quoridor->AddPlayer(m_player_factory.GetPlayer(1));
 				m_quoridor->AddPlayer(m_player_factory.GetPlayer(1));
 				break;
 

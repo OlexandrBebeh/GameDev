@@ -18,7 +18,7 @@ MonteCarloNode* model::MonteCarloStrategy::GetNextToExplore(MonteCarloNode* node
 {
 	if (node->childs.empty())
 	{
-		auto moves = m_game.GetPossibleMoves();
+		auto moves = m_game.GetUsefullMoves(m_game.GetCurrentPlayerId());
 
 		auto rng = std::default_random_engine{};
 		std::shuffle(std::begin(moves), std::end(moves), rng);
@@ -58,11 +58,11 @@ MonteCarloNode* model::MonteCarloStrategy::GetNextToExplore(MonteCarloNode* node
 double model::MonteCarloStrategy::CalculateUCB(MonteCarloNode* node)
 {
 	double a = node->win / node->games;
-	if (node->depth % 2 == 1)
+	if (node->depth % 2 == 0)
 	{
 		a = 1 - a;
 	}
-	return a + 1.4142 * sqrt(std::log(node->parent->games) / node->games);
+	return a + 1.4142 * sqrt(std::log10(node->parent->games) / node->games);
 }
 
 MonteCarloNode* model::MonteCarloStrategy::FindBest(MonteCarloNode* node)
@@ -139,6 +139,7 @@ void model::MonteCarloStrategy::UpdateTree(MonteCarloNode* node, int win)
 	while (temp != nullptr)
 	{
 		temp->games++;
+
 		temp->win += win;
 		temp = temp->parent;
 	}
@@ -146,7 +147,7 @@ void model::MonteCarloStrategy::UpdateTree(MonteCarloNode* node, int win)
 
 Move model::MonteCarloStrategy::GetRandomMove()
 {
-	if (rand() % 101 < 60)
+	if (rand() % 101 < 70)
 	{
 		return m_game.GetShortesFigureMove();
 	}
@@ -176,12 +177,23 @@ Move model::MonteCarloStrategy::GetRandomMove()
 
 Move MonteCarloStrategy::GetMove(Game* game, int target)
 {
+	auto start = std::chrono::system_clock::now();
+
 	if (m_counter < 2)
 	{
+		MonteCarloNode root;
 		m_counter++;
+		int a = 0;
+		while (CheckTime(start))
+		{
+			m_game = game;
+			auto node = GetNextToExplore(&root);
+			UpdateTree(node, Simulate());
+			//std::cout << a << std::endl;
+			a++;
+		}
 		return game->GetShortesFigureMove();
 	}
-	auto start = std::chrono::system_clock::now();
 
 	MonteCarloNode root;
 	if (m_root != nullptr)
@@ -196,20 +208,39 @@ Move MonteCarloStrategy::GetMove(Game* game, int target)
 				break;
 			}
 		}
-		m_root->parent = nullptr;
-		root = *m_root;
+		if (m_root->parent != nullptr)
+		{
+			m_root->parent = nullptr;
+			root = *m_root;
+		}
 	}
 	 
 	int counter = 0;
 	m_target_player = game->GetCurrentPlayerId();
 	
-	while (counter < 10000)
+	while (CheckTime(start))
 	{
 		m_game = game;
 		auto node = GetNextToExplore(&root);
 		UpdateTree(node, Simulate());
 		counter++;
 	}
-	m_root = FindBest(&root);
-	return *m_root->move;
+	std::cout << counter << std::endl;
+
+	double best = -1;
+	MonteCarloNode* best_node = nullptr;
+	for (auto child : root.childs)
+	{
+		if (child->games > 0)
+		{
+			auto t = child->win / child->games;
+			if (t > best)
+			{
+				best = t;
+				best_node = child;
+			}
+		}
+	}
+	m_root = best_node;
+	return *(m_root->move);
 }

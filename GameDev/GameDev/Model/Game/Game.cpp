@@ -389,7 +389,7 @@ std::vector<Move> model::Game::GetPossibleMoves(int player)
 {
 	std::vector<Move> moves;
 
-	for (auto pos : m_field->GetPossibleFigureMoves(m_players[player]->GetPosition()))
+	for (auto pos : m_field->GetPossibleFigureMoves(GetCurrentPlayer()->GetPosition()))
 	{
 		moves.emplace_back(1, pos);
 	}
@@ -410,17 +410,41 @@ std::vector<Move> model::Game::GetPossibleMoves(int player)
 
 std::vector<Move> model::Game::GetUsefullMoves(int player)
 {
-	std::vector<Move> moves;
+	std::set<Move> moves;
 
 	for (auto pos : m_field->GetPossibleFigureMoves(m_players[player]->GetPosition()))
 	{
-		moves.emplace_back(1, pos);
+		moves.insert(Move(1, pos));
 	}
 	if (m_players[player]->GetPartitionsAmount())
 	{
-		
+		for (auto palyer : m_players)
+		{
+			int v = palyer.second->GetPosition().GetVertical();
+			int h = palyer.second->GetPosition().GetHorizontal();
+			for (int i = v - 2; i < v + 2; i++)
+			{
+				for (int j = h - 2; j < h + 1; j++)
+				{
+					auto pos = Position{ i,j };
+					if (std::find(m_field->m_possible_vertical_partitions.begin(),
+						m_field->m_possible_vertical_partitions.end(), pos)
+						!= m_field->m_possible_vertical_partitions.end())
+					{
+						moves.insert(Move(2, pos));
+					}
+					if (std::find(m_field->m_possible_horizontal_partitions.begin(),
+						m_field->m_possible_horizontal_partitions.end(), pos)
+						!= m_field->m_possible_horizontal_partitions.end())
+					{
+						moves.insert(Move(3, pos));
+					}
+				}
+			}
+		}
 	}
-	return moves;
+
+	return std::vector<Move>(moves.begin(),moves.end());
 }
 
 std::vector<std::pair<int, Move>> model::Game::GetHistory()
