@@ -90,31 +90,8 @@ int model::MonteCarloStrategy::Simulate()
 
 	while (true)
 	{
-		auto it = m_dict.find({ m_game.GetField(),m_game.GetCrosstPatritions() });
-		if (it == m_dict.end())
-		{
-			m_game.UpdatePossiblePartitions();
-			auto move = GetRandomMove();
-			m_dict[{ m_game.GetField(), m_game.GetCrosstPatritions() }] =
-			{ 
-				  m_game.GetPossibleVerticalPatrtitions(),
-				  m_game.GetPossibleHorizontalPatrtitions() 
-			};
-			m_game.MakeTrustMove(move);
-			m_game.UpdatePossiblePartitions();
-			m_dict[{ m_game.GetField(), m_game.GetCrosstPatritions() }] =
-			{
-				  m_game.GetPossibleVerticalPatrtitions(),
-				  m_game.GetPossibleHorizontalPatrtitions()
-			};
-		}
-		else
-		{
-			m_game.SetPossibleHorizontalPatrtitions(m_dict[{ m_game.GetField(), m_game.GetCrosstPatritions() }].second);
-			m_game.SetPossibleVerticalPatrtitions(m_dict[{ m_game.GetField(), m_game.GetCrosstPatritions() }].first);
-			auto move = GetRandomMove();
-			m_game.MakeTrustMove(move);
-		}
+		auto move = GetRandomMove();
+		m_game.MakeMove(move);
 
 		int winner = m_game.CheckWin();
 		if (winner != -1)
@@ -147,6 +124,10 @@ void model::MonteCarloStrategy::UpdateTree(MonteCarloNode* node, int win)
 
 Move model::MonteCarloStrategy::GetRandomMove()
 {
+	if (m_game.GetCurrentPlayer()->GetPartitionsAmount() == 0)
+	{
+		return m_game.GetShortesFigureMove();
+	}
 	if (rand() % 101 < 70)
 	{
 		return m_game.GetShortesFigureMove();
@@ -196,26 +177,26 @@ Move MonteCarloStrategy::GetMove(Game* game, int target)
 	}
 
 	MonteCarloNode root;
-	if (m_root != nullptr)
-	{
-		auto move = game->GetHistory().back().second;
-		
-		for (auto ch : m_root->childs)
-		{
-			if (move.first == ch->move->first && move.second == ch->move->second)
-			{
-				m_root = ch;
-				break;
-			}
-		}
-		if (m_root->parent != nullptr)
-		{
-			m_root->parent = nullptr;
-			root = *m_root;
-		}
-	}
+	//if (m_root != nullptr)
+	//{
+	//	auto move = game->GetHistory().back().second;
+	//	
+	//	for (auto ch : m_root->childs)
+	//	{
+	//		if (move.first == ch->move->first && move.second == ch->move->second)
+	//		{
+	//			m_root = ch;
+	//			break;
+	//		}
+	//	}
+
+	//	if (m_root->parent != nullptr)
+	//	{
+	//		m_root->parent = nullptr;
+	//		root = *m_root;
+	//	}
+	//}
 	 
-	int counter = 0;
 	m_target_player = game->GetCurrentPlayerId();
 	
 	while (CheckTime(start))
@@ -223,9 +204,7 @@ Move MonteCarloStrategy::GetMove(Game* game, int target)
 		m_game = game;
 		auto node = GetNextToExplore(&root);
 		UpdateTree(node, Simulate());
-		counter++;
 	}
-	std::cout << counter << std::endl;
 
 	double best = -1;
 	MonteCarloNode* best_node = nullptr;
@@ -242,5 +221,16 @@ Move MonteCarloStrategy::GetMove(Game* game, int target)
 		}
 	}
 	m_root = best_node;
+	if (game->GetCurrentPlayer()->GetPartitionsAmount() == 0)
+	{
+		return game->GetShortesFigureMove();
+	}
 	return *(m_root->move);
+}
+
+model::MonteCarloStrategy::~MonteCarloStrategy()
+{
+	delete &m_dict;
+	delete &m_game;
+	delete m_root;
 }

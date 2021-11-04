@@ -13,7 +13,7 @@ namespace model
 
 		int m_target_player;
 
-		const double ALGORYTM_TIME = 2000.0;
+		const double ALGORYTM_TIME = 1900.0;
 
 		bool CheckTime(std::chrono::time_point<std::chrono::system_clock> start);
 
@@ -45,6 +45,7 @@ namespace model
 	public:
 		Move GetMove(Game* game, int target);
 
-
+		MonteCarloStrategy() = default;
+		~MonteCarloStrategy();
 	};
 }

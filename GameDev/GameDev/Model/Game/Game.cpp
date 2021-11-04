@@ -172,7 +172,8 @@ void Game::MakeMove(model::Move move)
 
 void model::Game::MakeTrustMove(model::Move move)
 {
-	if (move.first == 1)										{
+	if (move.first == 1)										
+	{
 		MakeFigureMove(move.second);
 	}
 	else if (move.first == 2)
@@ -181,6 +182,7 @@ void model::Game::MakeTrustMove(model::Move move)
 		m_field->RemoveVerticalPartitionFromAvailable(move.second);
 
 		GetCurrentPlayer()->SetPartitionsAmount(GetCurrentPlayer()->GetPartitionsAmount() - 1);
+		m_field->m_history.emplace_back(m_current_player, Move(2, move.second));
 	}
 	else if (move.first == 3)
 	{
@@ -189,6 +191,7 @@ void model::Game::MakeTrustMove(model::Move move)
 		m_field->RemoveHorizontalPartitionFromAvailable(move.second);
 
 		GetCurrentPlayer()->SetPartitionsAmount(GetCurrentPlayer()->GetPartitionsAmount() - 1);
+		m_field->m_history.emplace_back(m_current_player, Move(3, move.second));
 	}
 	else
 	{
@@ -418,26 +421,77 @@ std::vector<Move> model::Game::GetUsefullMoves(int player)
 	}
 	if (m_players[player]->GetPartitionsAmount())
 	{
-		for (auto palyer : m_players)
+		
+		int v = GetCurrentPlayer()->GetPosition().GetVertical();
+		int h = GetCurrentPlayer()->GetPosition().GetHorizontal();
+		for (int i = v - 1; i < v + 1; i++)
 		{
-			int v = palyer.second->GetPosition().GetVertical();
-			int h = palyer.second->GetPosition().GetHorizontal();
-			for (int i = v - 2; i < v + 2; i++)
+			for (int j = h - 1; j < h + 1; j++)
 			{
-				for (int j = h - 2; j < h + 1; j++)
+				auto pos = Position{ i,j };
+				if (std::find(m_field->m_possible_vertical_partitions.begin(),
+					m_field->m_possible_vertical_partitions.end(), pos)
+					!= m_field->m_possible_vertical_partitions.end())
 				{
-					auto pos = Position{ i,j };
-					if (std::find(m_field->m_possible_vertical_partitions.begin(),
-						m_field->m_possible_vertical_partitions.end(), pos)
-						!= m_field->m_possible_vertical_partitions.end())
+					moves.insert(Move(2, pos));
+				}
+				if (std::find(m_field->m_possible_horizontal_partitions.begin(),
+					m_field->m_possible_horizontal_partitions.end(), pos)
+					!= m_field->m_possible_horizontal_partitions.end())
+				{
+					moves.insert(Move(3, pos));
+				}
+			}
+		}
+		auto p = (GetCurrentPlayerId() + 1) % m_players.size();
+		v = m_players[p]->GetPosition().GetVertical();
+		h = m_players[p]->GetPosition().GetHorizontal();
+		for (int i = v - 2; i < v + 2; i++)
+		{
+			for (int j = h - 2; j < h + 2; j++)
+			{
+				auto pos = Position{ i,j };
+				if (std::find(m_field->m_possible_vertical_partitions.begin(),
+					m_field->m_possible_vertical_partitions.end(), pos)
+					!= m_field->m_possible_vertical_partitions.end())
+				{
+					moves.insert(Move(2, pos));
+				}
+				if (std::find(m_field->m_possible_horizontal_partitions.begin(),
+					m_field->m_possible_horizontal_partitions.end(), pos)
+					!= m_field->m_possible_horizontal_partitions.end())
+				{
+					moves.insert(Move(3, pos));
+				}
+			}
+		}
+		for (int i = 0; i < 8; i++)
+		{
+			for (int j = 0; j < 8; j++)
+			{
+				if (m_field->m_crosst_partitions[i][j] != 0)
+				{
+					for (int k = i - 2; k < i + 2; k++)
 					{
-						moves.insert(Move(2, pos));
-					}
-					if (std::find(m_field->m_possible_horizontal_partitions.begin(),
-						m_field->m_possible_horizontal_partitions.end(), pos)
-						!= m_field->m_possible_horizontal_partitions.end())
-					{
-						moves.insert(Move(3, pos));
+						for (int l = j - 2; l < j + 2; l++)
+						{
+							if (m_field->m_crosst_partitions[i][j] == 0)
+							{
+								auto pos = Position{ k,l };
+								if (std::find(m_field->m_possible_vertical_partitions.begin(),
+									m_field->m_possible_vertical_partitions.end(), pos)
+									!= m_field->m_possible_vertical_partitions.end())
+								{
+									moves.insert(Move(2, pos));
+								}
+								if (std::find(m_field->m_possible_horizontal_partitions.begin(),
+									m_field->m_possible_horizontal_partitions.end(), pos)
+									!= m_field->m_possible_horizontal_partitions.end())
+								{
+									moves.insert(Move(3, pos));
+								}
+							}
+						}
 					}
 				}
 			}

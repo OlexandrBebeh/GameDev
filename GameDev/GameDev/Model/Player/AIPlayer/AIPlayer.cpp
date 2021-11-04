@@ -10,6 +10,7 @@ AIPlayer::AIPlayer() : Player()
 
 AIPlayer::~AIPlayer()
 {
+	delete strategy;
 }
 
 bool AIPlayer::HasAILogic() const
