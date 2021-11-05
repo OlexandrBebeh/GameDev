@@ -28,7 +28,7 @@ namespace controller
 		Move ParseMove(std::string str);
 		int GetFlag(std::string str);
 		Move ParseBotMove(std::string str);
-		std::string ToBotMove(Move move);
+		std::string ToBotMove(Move move, model::Position pos);
 
 		std::map<char, int> move_digits;
 		std::map<char, int> wall_digits;

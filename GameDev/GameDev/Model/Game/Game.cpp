@@ -255,8 +255,8 @@ void model::Game::UpdatePossiblePartitions()
 			{
 				may_block_vert.push_back(*b);
 				may_block_vert.push_back(*b + Position{ 0, 1 });
-				may_block_hor.push_back(*b + Position{ -1, 0 });
-				may_block_hor.push_back(*b + Position{ -1, 1 });
+				may_block_vert.push_back(*b + Position{ -1, 0 });
+				may_block_vert.push_back(*b + Position{ -1, 1 });
 			}
 			else if (temp.GetVertical() == -2)
 			{
@@ -275,8 +275,8 @@ void model::Game::UpdatePossiblePartitions()
 			else if (temp.GetVertical() == 1 && temp.GetHorizontal() == 1)
 			{
 				may_block_vert.push_back(*b);
-				may_block_vert.push_back(*b + Position{1,0});
-				may_block_vert.push_back(*b + Position{ 0,-1 });
+				may_block_vert.push_back(*b + Position{  1, 0});
+				may_block_vert.push_back(*b + Position{ -1, 0});
 
 				may_block_hor.push_back(*b);
 				may_block_hor.push_back(*b + Position{ 0, 1 });

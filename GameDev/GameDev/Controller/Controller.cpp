@@ -65,7 +65,7 @@ void controller::Controller::BotPrepare()
 			}
 			else if (t == 2)
 			{
-				m_quoridor->AddPlayer(m_player_factory.GetPlayer(0));
+				m_quoridor->AddPlayer(m_player_factory.GetPlayer(1));
 				m_quoridor->AddPlayer(m_player_factory.GetPlayer(0));
 				break;
 
@@ -162,8 +162,6 @@ void controller::Controller::BotStart()
 
 			return;
 		}
-		m_output->ShowGameState(m_quoridor.get());
-
 		auto cur_player = m_quoridor->GetCurrentPlayer();
 
 		model::Move move;
@@ -177,7 +175,14 @@ void controller::Controller::BotStart()
 		}
 		if (cur_player->HasAILogic())
 		{
-			move = cur_player->GetMove(m_quoridor.get());
+			try 
+			{
+				move = cur_player->GetMove(m_quoridor.get());
+			}
+			catch (...)
+			{
+				move = m_quoridor->GetShortesFigureMove();
+			}
 		}
 
 		auto moves = m_quoridor->GetPossibleMoves(m_quoridor->GetCurrentPlayerId());
@@ -186,7 +191,7 @@ void controller::Controller::BotStart()
 		{
 			if (cur_player->HasAILogic())
 			{
-				m_output->ShowMessage(m_parser.ToBotMove(move));
+				m_output->ShowMessage(m_parser.ToBotMove(move, m_quoridor->GetCurrentPlayer()->GetPosition()));
 			}
 			m_quoridor->MakeMove(move);
 		}

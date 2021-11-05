@@ -67,6 +67,11 @@ model::Move controller::Parser::ParseBotMove(std::string str)
 		a.first = 1;
 		a.second = { tokens[1][1] - '1',move_digits[tokens[1][0]] };
 	}
+	else if (tokens[0] == "jump")
+	{
+		a.first = 1;
+		a.second = { tokens[1][1] - '1',move_digits[tokens[1][0]] };
+	}
 	else if (tokens[0] == "wall")
 	{
 		if (tokens[1][2] == 'v')
@@ -80,13 +85,25 @@ model::Move controller::Parser::ParseBotMove(std::string str)
 	return a;
 }
 
-std::string controller::Parser::ToBotMove(Move move)
+std::string controller::Parser::ToBotMove(Move move, model::Position pos)
 {
 	std::string str;
 	if (move.first == 1)
 	{
+		auto moving = move.second - pos;
+		if ((moving.GetHorizontal() == 1 && moving.GetVertical() == 0)
+			|| (moving.GetHorizontal() == 0 && moving.GetVertical() == 1)
+			|| (moving.GetHorizontal() ==-1 && moving.GetVertical() == 0)
+			|| (moving.GetHorizontal() == 0 && moving.GetVertical() ==-1))
+		{
+			str += "move ";
+		}
+		else
+		{
+			str += "jump ";
+
+		}
 		char a = 'A';
-		str += "move ";
 		str += a + move.second.GetHorizontal();
 		str += '1' + (move.second.GetVertical());
 	}
