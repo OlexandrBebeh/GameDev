@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClInclude Include="Controller\Controller.hpp" />
     <ClInclude Include="Controller\Parser.hpp" />
+    <ClInclude Include="Model\DataTypes\MoveProvider.hpp" />
     <ClInclude Include="Model\DataTypes\Position.hpp" />
     <ClInclude Include="Model\Game\Field.hpp" />
     <ClInclude Include="Model\Game\Game.hpp" />

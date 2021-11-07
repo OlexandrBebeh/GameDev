@@ -9,60 +9,60 @@ namespace model
 	class Position
 	{
 	public:
-		Position(int _x, int _y) : vertical(_x), horizontal(_y) {};
-		Position() :  vertical(-1), horizontal(-1) {};
+		Position(int _x, int _y) : y(_x), x(_y) {};
+		Position() :  y(-1), x(-1) {};
 		~Position() {};
 
-		const int GetHorizontal() const
+		const int GetX() const
 		{
-			return horizontal;
+			return x;
 		}
 
-		const int GetVertical() const
+		const int GetY() const
 		{
-			return vertical;
+			return y;
 		}
 
 		bool operator==(const Position& pos) const
 		{
-			 return pos.horizontal == this->horizontal
-				&& pos.vertical == this->vertical;
+			 return pos.x == this->x
+				&& pos.y == this->y;
 		
 		}
 
 		bool operator!=(Position pos)
 		{
-			return pos.horizontal != this->horizontal
-				|| pos.vertical != this->vertical;
+			return pos.x != this->x
+				|| pos.y != this->y;
 		}
 		 
 		bool operator<(const Position& pos) const
 		{
-			return (pos.vertical * 9 + pos.horizontal)
-				< (this->vertical * 9 + this->horizontal);
+			return (pos.y * 9 + pos.x)
+				< (this->y * 9 + this->x);
 		}
 
 		Position operator-(const Position& pos) const
 		{
-			return Position(this->vertical - pos.vertical,
-				this->horizontal - pos.horizontal);
+			return Position(this->y - pos.y,
+				this->x - pos.x);
 		}
 
 		Position operator+(const Position& pos) const
 		{
-			return Position(this->vertical + pos.vertical,
-				this->horizontal + pos.horizontal);
+			return Position(this->y + pos.y,
+				this->x + pos.x);
 		}
 
 		friend std::ostream& operator<<(std::ostream& os, const Position& pos)
 		{
-			os << "{" << pos.vertical << "," << pos.horizontal << "}";
+			os << "{" << pos.y << "," << pos.x << "}";
 			return os;
 		}
 
 	protected:
-		int vertical;
-		int horizontal;
+		int y;
+		int x;
 	};
 
 	using Move = std::pair<int, Position>;

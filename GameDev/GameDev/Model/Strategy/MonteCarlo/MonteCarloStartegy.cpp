@@ -85,6 +85,25 @@ MonteCarloNode* model::MonteCarloStrategy::FindBest(MonteCarloNode* node)
 	return best_node;
 }
 
+MonteCarloNode* model::MonteCarloStrategy::BestMove(MonteCarloNode* node)
+{
+	double best = -1;
+	MonteCarloNode* best_node = nullptr;
+	for (auto child : node->childs)
+	{
+		if (child->games > 0)
+		{
+			auto t = child->win / child->games;
+			if (t > best)
+			{
+				best = t;
+				best_node = child;
+			}
+		}
+	}
+	return best_node;
+}
+
 int model::MonteCarloStrategy::Simulate()
 {
 
@@ -162,41 +181,13 @@ Move MonteCarloStrategy::GetMove(Game* game, int target)
 
 	if (m_counter < 2)
 	{
-		MonteCarloNode root;
 		m_counter++;
-		int a = 0;
-		while (CheckTime(start))
-		{
-			m_game = game;
-			auto node = GetNextToExplore(&root);
-			UpdateTree(node, Simulate());
-			//std::cout << a << std::endl;
-			a++;
-		}
+
 		return game->GetShortesFigureMove();
 	}
 
 	MonteCarloNode root;
-	//if (m_root != nullptr)
-	//{
-	//	auto move = game->GetHistory().back().second;
-	//	
-	//	for (auto ch : m_root->childs)
-	//	{
-	//		if (move.first == ch->move->first && move.second == ch->move->second)
-	//		{
-	//			m_root = ch;
-	//			break;
-	//		}
-	//	}
 
-	//	if (m_root->parent != nullptr)
-	//	{
-	//		m_root->parent = nullptr;
-	//		root = *m_root;
-	//	}
-	//}
-	 
 	m_target_player = game->GetCurrentPlayerId();
 	
 	while (CheckTime(start))
@@ -206,31 +197,17 @@ Move MonteCarloStrategy::GetMove(Game* game, int target)
 		UpdateTree(node, Simulate());
 	}
 
-	double best = -1;
-	MonteCarloNode* best_node = nullptr;
-	for (auto child : root.childs)
-	{
-		if (child->games > 0)
-		{
-			auto t = child->win / child->games;
-			if (t > best)
-			{
-				best = t;
-				best_node = child;
-			}
-		}
-	}
-	m_root = best_node;
+	MonteCarloNode* best_node = BestMove(&root);
+
 	if (game->GetCurrentPlayer()->GetPartitionsAmount() == 0)
 	{
 		return game->GetShortesFigureMove();
 	}
-	return *(m_root->move);
+
+	return *(best_node->move);
 }
 
 model::MonteCarloStrategy::~MonteCarloStrategy()
 {
-	delete &m_dict;
 	delete &m_game;
-	delete m_root;
 }

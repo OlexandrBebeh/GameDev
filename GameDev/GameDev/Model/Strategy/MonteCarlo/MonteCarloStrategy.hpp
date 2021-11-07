@@ -24,6 +24,8 @@ namespace model
 
 		MonteCarloNode* FindBest(MonteCarloNode* node);
 
+		MonteCarloNode* BestMove(MonteCarloNode* node);
+
 		int Simulate();
 
 		void UpdateTree(MonteCarloNode* , int);
@@ -31,17 +33,7 @@ namespace model
 		Move GetRandomMove();
 
 		int m_counter = 0;
-		MonteCarloNode* m_root = nullptr;
 
-		std::map <
-			std::pair<
-			std::vector<std::vector<int>>,
-			std::vector<std::vector<int>>
-			>,
-			std::pair<
-			std::vector<Position>,
-			std::vector<Position>
-			>> m_dict;
 	public:
 		Move GetMove(Game* game, int target);
 

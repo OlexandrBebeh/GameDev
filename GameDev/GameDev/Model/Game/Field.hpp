@@ -60,8 +60,6 @@ namespace model
 		std::map<int, Position> m_prev_node;
 
 	public:
-		std::vector<std::pair<int, Move>> m_history;
-
 		std::vector<Position> m_not_blocked_vertical_partitions;
 
 		std::vector<Position> m_not_blocked_horizontal_partitions;

@@ -91,10 +91,10 @@ std::string controller::Parser::ToBotMove(Move move, model::Position pos)
 	if (move.first == 1)
 	{
 		auto moving = move.second - pos;
-		if ((moving.GetHorizontal() == 1 && moving.GetVertical() == 0)
-			|| (moving.GetHorizontal() == 0 && moving.GetVertical() == 1)
-			|| (moving.GetHorizontal() ==-1 && moving.GetVertical() == 0)
-			|| (moving.GetHorizontal() == 0 && moving.GetVertical() ==-1))
+		if ((moving.GetX() == 1 && moving.GetY() == 0)
+			|| (moving.GetX() == 0 && moving.GetY() == 1)
+			|| (moving.GetX() ==-1 && moving.GetY() == 0)
+			|| (moving.GetX() == 0 && moving.GetY() ==-1))
 		{
 			str += "move ";
 		}
@@ -104,15 +104,15 @@ std::string controller::Parser::ToBotMove(Move move, model::Position pos)
 
 		}
 		char a = 'A';
-		str += a + move.second.GetHorizontal();
-		str += '1' + (move.second.GetVertical());
+		str += a + move.second.GetX();
+		str += '1' + (move.second.GetY());
 	}
 	else
 	{
 		str += "wall ";
 		char a = 'S';
-		str += a + move.second.GetHorizontal();
-		str += '1' + move.second.GetVertical();
+		str += a + move.second.GetX();
+		str += '1' + move.second.GetY();
 		if (move.first == 2)
 		{
 			str += 'v';

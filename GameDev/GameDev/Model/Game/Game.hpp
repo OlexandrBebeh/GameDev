@@ -1,7 +1,6 @@
 #pragma once
 
 #include <map>
-#include <iostream>
 #include "../Player/Player.hpp"
 #include "Field.hpp"
 
@@ -39,21 +38,14 @@ namespace model
 		std::vector<Position> GetPossibleHorizontalPatrtitions() const;
 		void SetPossibleVerticalPatrtitions(std::vector<Position> v);
 		void SetPossibleHorizontalPatrtitions(std::vector<Position> v);
-		std::vector<Position> CheckPossibleVerrticalPartitions();
-		std::vector<Position> CheckPossibleHorizontalPartitions();
+
 		bool IsGameEnd();
 		std::vector<Move> GetPossibleMoves();
 
 		std::vector<Move> GetPossibleMoves(int player);
 		std::vector<Move> GetUsefullMoves(int player);
 
-		std::vector<std::pair<int, Move>> GetHistory();
-
 		void NextPlayer();
-
-		void RevertMove();
-
-		void Test();
 
 		int CheckWin();
 

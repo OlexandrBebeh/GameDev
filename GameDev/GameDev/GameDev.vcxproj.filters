@@ -149,5 +149,8 @@
     <ClInclude Include="Model\Strategy\MonteCarlo\MonteCarloStrategy.hpp">
       <Filter>Файлы заголовков\Model\Strategy\MonteCarlo</Filter>
     </ClInclude>
+    <ClInclude Include="Model\DataTypes\MoveProvider.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

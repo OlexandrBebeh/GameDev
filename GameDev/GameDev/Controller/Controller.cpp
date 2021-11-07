@@ -26,7 +26,7 @@ void Controller::Prepare()
 			}
 			else if (str == "2")
 			{
-				m_quoridor->AddPlayer(m_player_factory.GetPlayer(1));
+				m_quoridor->AddPlayer(m_player_factory.GetPlayer(0));
 				m_quoridor->AddPlayer(m_player_factory.GetPlayer(1));
 				break;
 
@@ -46,6 +46,7 @@ void Controller::Prepare()
 		m_quoridor->ResetGame();
 	}
 }
+
 void controller::Controller::BotPrepare()
 {
 	m_input = std::make_shared<view::Input>();
@@ -80,8 +81,7 @@ void controller::Controller::BotPrepare()
 
 		m_quoridor->ResetGame();
 	}
-}
-;
+};
 
 void Controller::Start()
 {
@@ -156,12 +156,6 @@ void controller::Controller::BotStart()
 {
 	while (true)
 	{
-		if (m_quoridor->CheckWin() >= 0)
-		{
-			m_output->ShowMessage(std::to_string(m_quoridor->CheckWin()));
-
-			return;
-		}
 		auto cur_player = m_quoridor->GetCurrentPlayer();
 
 		model::Move move;

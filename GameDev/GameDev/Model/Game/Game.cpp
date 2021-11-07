@@ -1,7 +1,6 @@
 #include "Game.hpp"
-#include "../../View/Output.hpp"
+#include "../DataTypes/MoveProvider.hpp"
 #include <set>
-#include "../../View/Output.hpp"
 
 using namespace model;
 
@@ -9,10 +8,10 @@ void model::Game::CleanPositions(std::vector<Position>& shortest)
 {
 	for (int i = 0; shortest.begin() + i != shortest.end(); i++)
 	{
-		if (shortest[i].GetHorizontal() < 0
-			|| shortest[i].GetVertical() < 0
-			|| shortest[i].GetHorizontal() >= PARTITION_SIZE
-			|| shortest[i].GetVertical() >= PARTITION_SIZE)
+		if (shortest[i].GetX() < 0
+			|| shortest[i].GetY() < 0
+			|| shortest[i].GetX() >= PARTITION_SIZE
+			|| shortest[i].GetY() >= PARTITION_SIZE)
 		{
 			shortest.erase(shortest.begin() + i);
 			i--;
@@ -23,10 +22,9 @@ void model::Game::CleanPositions(std::vector<Position>& shortest)
 Game::Game()
 {
 	m_players_amount = 0;
-	m_player_start_pos.push_back({ 0,4 });
-	m_player_start_pos.push_back({ 8,4 });
+	m_player_start_pos.push_back({ FIELD_SIZE - FIELD_SIZE,PARTITION_SIZE / 2 });
+	m_player_start_pos.push_back({ FIELD_SIZE - 1,PARTITION_SIZE / 2 });
 	m_field = std::make_shared<Field>();
-	Test();
 }
 
 model::Game::Game(Game* game)
@@ -50,11 +48,11 @@ void Game::AddPlayer(Player* player)
 	if (m_players_amount < m_player_start_pos.size())
 	{
 		auto pos = m_player_start_pos[m_players_amount];
-		player->SetPlayerWinRow(abs(pos.GetVertical() - PARTITION_SIZE));
+		player->SetPlayerWinRow(abs(pos.GetY() - PARTITION_SIZE));
 		player->SetStartPosition(pos);
 		player->SetField(m_field);
 
-		m_field->m_field[pos.GetVertical()][pos.GetHorizontal()] = m_players_amount;
+		m_field->m_field[pos.GetY()][pos.GetX()] = m_players_amount;
 
 		std::shared_ptr<Player> unique(player);
 		m_players[m_players_amount] = std::move(unique);
@@ -139,7 +137,6 @@ void Game::MakeMove(model::Move move)
 			m_field->SetVerticalPartition(move.second);
 			
 			m_field->RemoveVerticalPartitionFromAvailable(move.second);
-			m_field->m_history.emplace_back(m_current_player, Move(2, move.second));
 		}
 
 		GetCurrentPlayer()->SetPartitionsAmount(GetCurrentPlayer()->GetPartitionsAmount() - 1);
@@ -155,7 +152,6 @@ void Game::MakeMove(model::Move move)
 		{
 			m_field->SetHorizontalPartition(move.second);
 			m_field->RemoveHorizontalPartitionFromAvailable(move.second);
-			m_field->m_history.emplace_back(m_current_player, Move(3, move.second));
 		}
 
 		GetCurrentPlayer()->SetPartitionsAmount(GetCurrentPlayer()->GetPartitionsAmount() - 1);
@@ -182,7 +178,6 @@ void model::Game::MakeTrustMove(model::Move move)
 		m_field->RemoveVerticalPartitionFromAvailable(move.second);
 
 		GetCurrentPlayer()->SetPartitionsAmount(GetCurrentPlayer()->GetPartitionsAmount() - 1);
-		m_field->m_history.emplace_back(m_current_player, Move(2, move.second));
 	}
 	else if (move.first == 3)
 	{
@@ -191,7 +186,6 @@ void model::Game::MakeTrustMove(model::Move move)
 		m_field->RemoveHorizontalPartitionFromAvailable(move.second);
 
 		GetCurrentPlayer()->SetPartitionsAmount(GetCurrentPlayer()->GetPartitionsAmount() - 1);
-		m_field->m_history.emplace_back(m_current_player, Move(3, move.second));
 	}
 	else
 	{
@@ -217,146 +211,22 @@ void model::Game::UpdatePossiblePartitions()
 		std::vector<Position> may_block_vert;
 		std::vector<Position> may_block_hor;
 
-		for (auto b = shortest.begin(), 
-			c = shortest.begin() + 1; 
-			c != shortest.end(); 
-			b++, c++)
-		{
-			auto temp = *c - *b;
-
-			if (temp.GetVertical() == 1 && temp.GetHorizontal() == 0)
-			{
-				may_block_hor.push_back(*b);
-				may_block_hor.push_back(*b + Position{ 0, -1 });
-			}
-			else if (temp.GetHorizontal() == 1 && temp.GetVertical() == 0)
-			{
-				may_block_vert.push_back(*b);
-				may_block_vert.push_back(*b + Position{ -1, 0 });
-			}
-			else if (temp.GetVertical() == -1 && temp.GetHorizontal() == 0)
-			{
-				may_block_hor.push_back(*b + Position{ -1, 0 });
-				may_block_hor.push_back(*b + Position{ -1, -1 });
-			}
-			else if (temp.GetHorizontal() == -1 && temp.GetVertical() == 0)
-			{
-				may_block_vert.push_back(*b + Position{  0, -1 });
-				may_block_vert.push_back(*b + Position{ -1, -1 });
-			}
-			else if (temp.GetVertical() == 2)
-			{
-				may_block_hor.push_back(*b);
-				may_block_hor.push_back(*b + Position{ 1, 0 });
-				may_block_hor.push_back(*b + Position{ 0, -1 });
-				may_block_hor.push_back(*b + Position{ 1, -1 });
-			}
-			else if (temp.GetHorizontal() == 2)
-			{
-				may_block_vert.push_back(*b);
-				may_block_vert.push_back(*b + Position{ 0, 1 });
-				may_block_vert.push_back(*b + Position{ -1, 0 });
-				may_block_vert.push_back(*b + Position{ -1, 1 });
-			}
-			else if (temp.GetVertical() == -2)
-			{
-				may_block_hor.push_back(*b + Position{ -1, 0 });
-				may_block_hor.push_back(*b + Position{ -1, -1 });
-				may_block_hor.push_back(*b + Position{ -2, 0 });
-				may_block_hor.push_back(*b + Position{ -2, -1 });
-			}
-			else if (temp.GetHorizontal() == -2)
-			{
-				may_block_vert.push_back(*b + Position{ -1, -2 });
-				may_block_vert.push_back(*b + Position{ -1, -1 });
-				may_block_vert.push_back(*b + Position{ 0, -2 });
-				may_block_vert.push_back(*b + Position{ 0, -1 });
-			}
-			else if (temp.GetVertical() == 1 && temp.GetHorizontal() == 1)
-			{
-				may_block_vert.push_back(*b);
-				may_block_vert.push_back(*b + Position{  1, 0});
-				may_block_vert.push_back(*b + Position{ -1, 0});
-
-				may_block_hor.push_back(*b);
-				may_block_hor.push_back(*b + Position{ 0, 1 });
-				may_block_hor.push_back(*b + Position{ 0,-1 });
-			}
-			else if (temp.GetVertical() == -1 && temp.GetHorizontal() == 1)
-			{
-				may_block_vert.push_back(*b);
-				may_block_vert.push_back(*b + Position{ -1, 0 });
-				may_block_vert.push_back(*b + Position{ -2, 0 });
-
-				may_block_hor.push_back(*b + Position{ -1, 0 });
-				may_block_hor.push_back(*b + Position{ -1, 1 });
-				may_block_hor.push_back(*b + Position{ -1, -1 });
-
-			}
-			else if (temp.GetVertical() == -1 && temp.GetHorizontal() == -1)
-			{
-				may_block_vert.push_back(*b + Position{ 0,-1 });
-				may_block_vert.push_back(*b + Position{ -1,-1 });
-				may_block_vert.push_back(*b + Position{ -2,-1 });
-
-				may_block_hor.push_back(*b + Position{ -1,  0 });
-				may_block_hor.push_back(*b + Position{ -1, -1 });
-				may_block_hor.push_back(*b + Position{ -1, -2 });
-			}
-			else if (temp.GetVertical() == 1 && temp.GetHorizontal() == -1)
-			{
-				may_block_vert.push_back(*b + Position{ 0,-1 });
-				may_block_vert.push_back(*b + Position{ 1,-1 });
-				may_block_vert.push_back(*b + Position{ -1,-1 });
-				
-				may_block_hor.push_back(*b);
-				may_block_hor.push_back(*b + Position{ 0, -1 });
-				may_block_hor.push_back(*b + Position{ 0, -2 });
-			}
-
-		}
+		MoveProvider::GetPartitonsWhichBlockway(shortest, may_block_vert, may_block_hor);
 
 		CleanPositions(may_block_vert);
 		CleanPositions(may_block_hor);
 
-		for (auto& par : may_block_hor)
-		{
-			auto cross = std::find(hor_part.begin(),
-				hor_part.end(),
-				par);
-			if (cross != hor_part.end())
-			{
-				std::vector<Position> temp;
-				m_field->SetHorizontalPartition(par);
-				bool is_valid = m_field->AStar(player.second->GetPosition(),
-					temp,
-					player.second->GetPlayerWinRow());
-				if (!is_valid)
-				{
-					hor_part.erase(cross);
-				}
-				m_field->DeleteHorizontalPartition(par);
-			}
-		}
-		for (auto& par : may_block_vert)
-		{
-			auto cross = std::find(vert_part.begin(),
-				vert_part.end(),
-				par);
-			if (cross != vert_part.end())
-			{
-				std::vector<Position> temp;
-				m_field->SetVerticalPartition(par);
-				bool is_valid = m_field->AStar(player.second->GetPosition(),
-					temp,
-					player.second->GetPlayerWinRow());
-				if (!is_valid)
-				{
-					vert_part.erase(cross);
-				}
-				m_field->DeleteVerticalPartition(par);
-			}
-		}
+		MoveProvider::GetPartitonsWhichBlockWay(m_field.get(),
+			may_block_vert,
+			vert_part,
+			player.second->GetPosition(),
+			player.second->GetPlayerWinRow(), false);
+		
+		MoveProvider::GetPartitonsWhichBlockWay(m_field.get(),
+			may_block_hor,
+			hor_part,
+			player.second->GetPosition(),
+			player.second->GetPlayerWinRow(),true);
 	}
 	m_field->m_possible_horizontal_partitions = hor_part;
 	m_field->m_possible_vertical_partitions = vert_part;
@@ -422,88 +292,21 @@ std::vector<Move> model::Game::GetUsefullMoves(int player)
 	if (m_players[player]->GetPartitionsAmount())
 	{
 		
-		int v = GetCurrentPlayer()->GetPosition().GetVertical();
-		int h = GetCurrentPlayer()->GetPosition().GetHorizontal();
-		for (int i = v - 1; i < v + 1; i++)
-		{
-			for (int j = h - 1; j < h + 1; j++)
-			{
-				auto pos = Position{ i,j };
-				if (std::find(m_field->m_possible_vertical_partitions.begin(),
-					m_field->m_possible_vertical_partitions.end(), pos)
-					!= m_field->m_possible_vertical_partitions.end())
-				{
-					moves.insert(Move(2, pos));
-				}
-				if (std::find(m_field->m_possible_horizontal_partitions.begin(),
-					m_field->m_possible_horizontal_partitions.end(), pos)
-					!= m_field->m_possible_horizontal_partitions.end())
-				{
-					moves.insert(Move(3, pos));
-				}
-			}
-		}
+		int v = GetCurrentPlayer()->GetPosition().GetY();
+		int h = GetCurrentPlayer()->GetPosition().GetX();
+		
+		MoveProvider::GetPartitionsArounPlayer({ v,h }, m_field.get(),moves);
+
 		auto p = (GetCurrentPlayerId() + 1) % m_players.size();
-		v = m_players[p]->GetPosition().GetVertical();
-		h = m_players[p]->GetPosition().GetHorizontal();
-		for (int i = v - 2; i < v + 2; i++)
-		{
-			for (int j = h - 2; j < h + 2; j++)
-			{
-				auto pos = Position{ i,j };
-				if (std::find(m_field->m_possible_vertical_partitions.begin(),
-					m_field->m_possible_vertical_partitions.end(), pos)
-					!= m_field->m_possible_vertical_partitions.end())
-				{
-					moves.insert(Move(2, pos));
-				}
-				if (std::find(m_field->m_possible_horizontal_partitions.begin(),
-					m_field->m_possible_horizontal_partitions.end(), pos)
-					!= m_field->m_possible_horizontal_partitions.end())
-				{
-					moves.insert(Move(3, pos));
-				}
-			}
-		}
-		for (int i = 0; i < 8; i++)
-		{
-			for (int j = 0; j < 8; j++)
-			{
-				if (m_field->m_crosst_partitions[i][j] != 0)
-				{
-					for (int k = i - 2; k < i + 2; k++)
-					{
-						for (int l = j - 2; l < j + 2; l++)
-						{
-							if (m_field->m_crosst_partitions[i][j] == 0)
-							{
-								auto pos = Position{ k,l };
-								if (std::find(m_field->m_possible_vertical_partitions.begin(),
-									m_field->m_possible_vertical_partitions.end(), pos)
-									!= m_field->m_possible_vertical_partitions.end())
-								{
-									moves.insert(Move(2, pos));
-								}
-								if (std::find(m_field->m_possible_horizontal_partitions.begin(),
-									m_field->m_possible_horizontal_partitions.end(), pos)
-									!= m_field->m_possible_horizontal_partitions.end())
-								{
-									moves.insert(Move(3, pos));
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+		v = m_players[p]->GetPosition().GetY();
+		h = m_players[p]->GetPosition().GetX();
+
+		MoveProvider::GetPartitionsArounPlayer({ v,h }, m_field.get(), moves, 2);
+
+		MoveProvider::GetPartitionsAroundPartitions(m_field.get(), moves, 2);
 	}
 
 	return std::vector<Move>(moves.begin(),moves.end());
-}
-
-std::vector<std::pair<int, Move>> model::Game::GetHistory()
-{
-	return m_field->m_history;
 }
 
 void Game::MakeFigureMove(Position position)
@@ -514,118 +317,15 @@ void Game::MakeFigureMove(Position position)
 
 	if (it != posible_ways.end())
 	{
-		m_field->m_field[m_players[m_current_player]->GetPosition().GetVertical()][m_players[m_current_player]->GetPosition().GetHorizontal()] = -1;
-		m_field->m_field[position.GetVertical()][position.GetHorizontal()] = m_current_player;
+		m_field->m_field[m_players[m_current_player]->GetPosition().GetY()][m_players[m_current_player]->GetPosition().GetX()] = -1;
+		m_field->m_field[position.GetY()][position.GetX()] = m_current_player;
 		GetCurrentPlayer()->SetPosition(position);
 	}
 	else
 	{
 		throw std::exception{"Wrong Move"};
 	}
-
-	m_field->m_history.emplace_back(m_current_player, Move(1, position));
 }
-
-std::vector<Position> Game::CheckPossibleVerrticalPartitions()
-{
-	std::vector<Position> positions;
-
-	for (auto& player : m_players)
-	{
-		std::vector<Position> shortest;
-		m_field->AStar(player.second->GetPosition(),
-			shortest,
-			player.second->GetPlayerWinRow());
-		shortest.push_back(player.second->GetPosition());
-		
-		for (int i = 0; shortest.begin() + i != shortest.end(); i++)
-		{
-			if (shortest[i].GetHorizontal() == PARTITION_SIZE || shortest[i].GetVertical() == PARTITION_SIZE)
-			{
-				shortest.erase(shortest.begin() + i);
-				i--;
-			}
-		}
-
-		for (auto& par : shortest)
-		{
-			auto cross = std::find(m_field->m_not_blocked_vertical_partitions.begin(), 
-									m_field->m_not_blocked_vertical_partitions.end(), 
-									par);
-			if (cross != shortest.end())
-			{
-				std::vector<Position> temp;
-
-
-				m_field->SetVerticalPartition(par);
-				bool is_valid = m_field->AStar(player.second->GetPosition(),
-					temp,
-					player.second->GetPlayerWinRow());
-				if (!is_valid)
-				{
-					remove(positions.begin(), positions.end(), par);
-				}
-				m_field->DeleteVerticalPartition(par);
-			}
-			else
-			{
-
-			}
-		}
-
-	}
-
-	return  positions;
-}
-
-std::vector<Position> Game::CheckPossibleHorizontalPartitions()
-{
-	std::vector<Position> positions = m_field->m_not_blocked_horizontal_partitions;
-
-
-	for (auto& player : m_players)
-	{
-		std::vector<Position> shortest;
-
-		m_field->AStar(player.second->GetPosition(),
-			shortest,
-			player.second->GetPlayerWinRow());
-
-		shortest.push_back(player.second->GetPosition());
-
-		for (int i = 0; shortest.begin()+i != shortest.end(); i++)
-		{
-			if (shortest[i].GetHorizontal() == PARTITION_SIZE || shortest[i].GetVertical() == PARTITION_SIZE)
-			{
-				shortest.erase(shortest.begin() + i);
-				i--;
-			}
-		}
-		for (auto& par : shortest)
-		{
-			auto cross = std::find(shortest.begin(), shortest.end(), par);
-			if (cross != shortest.end())
-			{
-				std::vector<Position> temp;
-				m_field->m_horizontal_partitions[par.GetVertical()][par.GetHorizontal()] = 1;
-				m_field->m_crosst_partitions[par.GetVertical()][par.GetHorizontal()] = -1;
-				m_field->m_horizontal_partitions[par.GetVertical()][par.GetHorizontal() + 1] = 1;
-				bool is_valid = m_field->AStar(player.second->GetPosition(),
-					temp,
-					player.second->GetPlayerWinRow());
-				if (!is_valid || temp.empty())
-				{
-					remove(positions.begin(),positions.end(),par);
-				}
-				m_field->DeleteHorizontalPartition(par);
-			}
-		}
-
-	}
-
-	return  positions;
-}
-
 
 std::vector<Position> Game::GetPossibleFigureMoves(int player_id)
 {
@@ -654,130 +354,12 @@ void Game::NextPlayer()
 	}
 }
 
-void model::Game::RevertMove()
-{
-
-}
-
-void Game::Test()
-{
-	//m_field->m_field =
-	//{
-	//	{-1,-1,-1,-1,-1,-1,-1,-1,-1,},
-	//		{-1,-1,-1,-1,-1,-1,-1,-1,-1,},
-	//		{-1,-1,-1,-1,-1,-1,-1,-1,-1,},
-	//		{-1,-1,-1,-1,-1,-1,-1,-1,-1,},
-	//		{-1,-1,-1,-1,-1,-1,-1,-1,-1,},
-	//		{-1,-1, 1,-1, 0,-1,-1,-1,-1,},
-	//		{-1,-1,-1,-1,-1,-1,-1,-1,-1,},
-	//		{-1,-1,-1,-1,-1,-1,-1,-1,-1,},
-	//		{-1,-1,-1,-1,-1,-1,-1,-1,-1,}
-	//};
-
-	//m_field->m_horizontal_partitions =
-	//{
-	//			{0,1,1,0,1,1,1,1,0},
-	//		{0,0,1,1,0,1,1,0,0},
-	//		{0,1,1,0,1,1,1,1,0},
-	//		{0,0,0,1,1,0,0,0,0},
-	//		{0,0,1,1,0,0,0,0,0},
-	//		{1,1,0,1,1,1,1,1,1},
-	//		{0,0,0,0,1,1,0,0,0},
-	//		{0,0,0,0,1,1,0,0,0},
-	//};
-	//m_field->m_vertical_partitions =
-	//{
-	//	{1,0,0,0,0,0,0,0},
-	//		{1,1,0,0,0,0,0,1},
-	//		{1,1,1,0,0,0,0,1},
-	//		{1,1,1,0,0,1,0,0},
-	//		{1,1,0,0,0,1,1,1},
-	//		{1,0,0,0,0,0,1,1},
-	//		{0,0,0,0,0,1,0,0},
-	//		{0,1,1,0,0,1,0,1},
-	//		{0,1,1,0,0,0,0,1},
-	//};
-	//m_field->m_crosst_partitions =
-	//{
-	//		{1,-1,0,0,-1,0,-1,0,},
-	//		{0,1,-1,0,0,-1,0,1,},
-	//		{1,-1,1,0,-1,0,-1,0,},
-	//		{0,1,0,-1,0,1,0,0,},
-	//		{1,0,-1,0,0,0,1,1,},
-	//		{-1,0,0,-1,0,-1,0,-1,},
-	//		{0,0,0,0,-1,1,0,0,},
-	//		{0,1,1,0,-1,0,0,1,}
-	//};
-
-	m_field->m_field =
-	{
-		{-1, -1, -1, -1, -1, -1, -1, -1, -1,},
-			{-1, -1, -1, -1, -1, -1, -1, -1, -1,},
-			{-1, -1, -1, -1, -1, -1, -1, -1, -1,},
-			{-1, -1, -1, -1, -1, -1, -1, -1, -1,},
-			{-1, -1, 0, -1, -1, -1, -1, -1, -1,},
-			{-1, -1, -1, -1, -1, -1, -1, 1, -1,},
-			{-1, -1, -1, -1, -1, -1, -1, -1, -1,},
-			{-1, -1, -1, -1, -1, -1, -1, -1, -1,},
-			{-1, -1, -1, -1, -1, -1, -1, -1, -1,},
-	};
-
-	m_field->m_horizontal_partitions =
-	{
-			{1, 1, 0, 0, 1, 1, 0, 1, 1,},
-			{1, 1, 0, 0, 0, 0, 1, 1, 0,},
-			{1, 1, 0, 1, 1, 0, 1, 1, 0,},
-			{0, 1, 1, 0, 0, 1, 1, 0, 0,},
-			{1, 1, 0, 0, 0, 1, 1, 1, 1,},
-			{0, 1, 1, 1, 1, 0, 1, 1, 0,},
-			{0, 1, 1, 0, 1, 1, 1, 1, 0,},
-			{0, 0, 1, 1, 1, 1, 0, 0, 0,},
-
-	};
-	m_field->m_vertical_partitions =
-	{
-		{0, 1, 1, 0, 0, 0, 1, 0,},
-			{0, 1, 1, 1, 0, 1, 1, 0,},
-			{0, 0, 0, 1, 1, 1, 0, 0,},
-			{1, 0, 1, 0, 1, 0, 1, 1,},
-			{1, 1, 1, 1, 0, 0, 1, 1,},
-			{0, 1, 1, 1, 0, 1, 0, 0,},
-			{1, 0, 1, 1, 0, 1, 0, 1,},
-			{1, 0, 0, 1, 0, 1, 1, 1,},
-			{0, 0, 0, 0, 0, 1, 1, 0,},
-	};
-	m_field->m_crosst_partitions =
-	{
-			 {-1, 1, 1, 0, -1, 0, 1, -1,},
-			{-1, 0, 0, 1, 0, 1, -1, 0,},
-			{-1, 0, 0, -1, 1, 0, -1, 0,},
-			{1, -1, 1, 0, 0, -1, 1, 1,},
-			{-1, 1, -1, 1, 0, -1, 0, -1,},
-			{0, -1, 1, -1, 0, 1, -1, 0,},
-			{1, -1, 0, 1, -1, 0, -1, 1,},
-			{0, 0, -1, 0, -1, 1, 1, 0,},
-
-	};
-
-		
-	//auto v = view::Output();
-
-	//v.ShowGameState(this);
-
-	Position player_pos{4, 2};
-	std::vector< Position> posi;
-	auto t = m_field->AStar(player_pos, posi,8);
-	posi.size();
-
-	ResetGame();
-}
-
 int model::Game::CheckWin()
 {
 	int winner = -1;
 	for (auto& player : m_players)
 	{
-		if (player.second->GetPosition().GetVertical() 
+		if (player.second->GetPosition().GetY() 
 			== player.second->GetPlayerWinRow())
 		{
 			winner = player.first;
